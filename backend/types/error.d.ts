@@ -1,13 +1,13 @@
-type ERR = {
-	statusCode:number;
+export type ERR = {
+	status_code:number;
 	message:string;
 }
 
 export interface LOG_ERR{
 	title?:string;
-	reqId?:string;
+	req_id?:string;
 	timestamp?:Date;
-	userId?:string;
+	user_id?:string;
 	error:ERR;
 }
 
