@@ -1,15 +1,15 @@
 import { Pool } from "pg";
-import { RedisClientType } from "ioredis";
-import { Logger } from "../services/log.service.ts";
-const logger = new Logger;
+import type { RedisClientType } from "redis";
+import { LoggerService } from "../services/log.service.ts";
+const logger = new LoggerService();
 
 export class Health{
 	constructor(private db:Pool, private redis:RedisClientType){
 		if(!db) throw new Error("Failed to provide a db.");
-		if(!RedisClientType) throw new Error("Failed to provide a RedisClient.");
+		if(!redis) throw new Error("Failed to provide a RedisClient.");
 	}
 
-	async PING(){
+	async PING(req_id:string){
 		let dbConnection = null;
 		let redisErr = null;
 		let dbErr = null;
@@ -17,7 +17,7 @@ export class Health{
 			await this.db.connect();
 			await this.redis.connect();
 			
-			this.db.on('connection', () =>{
+			this.db.on('connection', () => {
 				dbConnection = true;
 			});
 			this.db.on("error", (error:any) => {
@@ -28,8 +28,8 @@ export class Health{
 				redisErr = error; 
 			})
 
-			if(!reply && redisErr !== null) await logger.log(JSON.stringify({ title: "REDIS", redisErr }));	
-			if(dbConnection !== true && dbConnection !== null) await logger.log(JSON.stringify({ title: "DB", dbErr }));
+			if(!reply && redisErr !== null) await logger.log_err({ title: "REDIS", error: redisErr  } , req_id);	
+			if(dbConnection !== true && dbConnection !== null) await logger.log_err({ title: "DB", error:dbErr }, req_id);
 
 			return {
 				dbConnection,
