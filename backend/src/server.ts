@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 import { build } from "./app.ts";
 
-export const server = build();
+const server = build();
 
-server.listen({ port: Number(process.env.PORT) }, async(err, address) => {
+server.listen({ port: Number(process.env.PORT) }, async (err, address) => {
 	if(err){
 		server.log.error(err);
 		console.error(`Error:${err}`);

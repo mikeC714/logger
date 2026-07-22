@@ -9,7 +9,7 @@ export class Health{
 		if(!redis) throw new Error("Failed to provide a RedisClient.");
 	}
 
-	async PING(req_id:string){
+	async PING(reqId:string){
 		let dbConnection = null;
 		let redisErr = null;
 		let dbErr = null;
@@ -28,8 +28,8 @@ export class Health{
 				redisErr = error; 
 			})
 
-			if(!reply && redisErr !== null) await logger.log_err({ title: "REDIS", error: redisErr  } , req_id);	
-			if(dbConnection !== true && dbConnection !== null) await logger.log_err({ title: "DB", error:dbErr }, req_id);
+			if(!reply && redisErr !== null) await logger.log_err({ title: "REDIS", error: redisErr  } , reqId);	
+			if(dbConnection !== true && dbConnection !== null) await logger.log_err({ title: "DB", error:dbErr }, reqId);
 
 			return {
 				dbConnection,

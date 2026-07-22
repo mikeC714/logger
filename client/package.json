@@ -10,6 +10,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@opentui/core": "^0.4.5"
+    "@opentui/core": "^0.4.5",
+    "ioredis": "^5.11.1"
   }
 }

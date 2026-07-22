@@ -3,7 +3,7 @@ export const login_schema = {
 		type:'object',
 		required: ['username', 'passphrase'],
 		properties: {
-			username: { type: 'string', minLenght: 1  },
+			username: { type: 'string', minLength: 1  },
 			passphrase: { type: 'string', minLength: 8 }
 		} 
 	},
@@ -11,8 +11,8 @@ export const login_schema = {
 		200: {
 			type: 'string',
 			properties: {
+				ok: { type: 'boolean' },
 				username: { type: 'string' },
-				logs: { type: Array<Array<Buffer>> }
 			}
 		}
 	}
