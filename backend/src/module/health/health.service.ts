@@ -1,10 +1,9 @@
 import { Pool } from "pg";
-import type { RedisClientType } from "redis";
-import { LoggerService } from "../services/log.service.ts";
+import { LoggerService } from "../log/log.service.ts";
 const logger = new LoggerService();
 
 export class Health{
-	constructor(private db:Pool, private redis:RedisClientType){
+	constructor(private db:Pool, private redis:any){
 		if(!db) throw new Error("Failed to provide a db.");
 		if(!redis) throw new Error("Failed to provide a RedisClient.");
 	}
@@ -17,7 +16,7 @@ export class Health{
 			await this.db.connect();
 			await this.redis.connect();
 			
-			this.db.on('connection', () => {
+			this.db.on('connect', () => {
 				dbConnection = true;
 			});
 			this.db.on("error", (error:any) => {
