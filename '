@@ -1,7 +1,6 @@
 import { EventEmitter } from "node:stream";
 import { AppError } from "../../errors/app.err.ts";
 import { LogError } from "../../errors/log.err.ts";
-import { LOG_EMIT } from "./log.emitter.ts";	
 import fs from "node:fs";
 import zlib from "node:zlib";
 import { pipeline } from "node:stream/promises";
@@ -19,7 +18,7 @@ interface LOG {
 	// log:Buffer[];	
 }
 
-class STREAM extends LOG_EMIT{
+class STREAM{
 	private redis:any;
 	private MAX_LENGTH:number = 5_000;
 
@@ -75,9 +74,8 @@ class STREAM extends LOG_EMIT{
 					read.push(null);	
 				}
 
-				for(const [id, chunks] of results){
-					const data = Object.fromEntries(chunks);
-					read.push({ id, data });
+				for(const [id, chunk] of results){
+					read.push({ id, chunk });
 					lastId = id;
 				}
 
@@ -101,25 +99,21 @@ class STREAM extends LOG_EMIT{
 
 	 private listen = async(username:string, logName:string, connection:boolean) => {
 		 if(connection !== true) return;
-		 const { maxed } = await this.CHECK_MAX_LENGTH(username, logName);
+		 const { maxed, startId } = await this.CHECK_MAX_LENGTH(username, logName);
 
-		if(maxed){
-			logName = await this.incrementName(logName);
-		}
-
-		 this.on("data", async(data) => {
-			 await this.redis.xadd(
-				 `LOG:user:${username}`,
-				 "*",
-				 "log_name",logName,
-				 "timestamp", Date.now(),
-				 "message", data.message,
-				 "service", data.service
-			 ) 
-		 })
+		 await this.redis.xadd(
+			`LOG:user:${username}`,
+			"*",
+			"log_name",logName,
+			"timestamp", Date.now(),
+			"message", data.message,
+			"service", data.service
+		 ) 
 	 }
-
+	
 }
+
+const stream = new STREAM();
 
 export class LoggerService{
 	private db:any;
