@@ -4,7 +4,5 @@ const PALETTE = {
 	text: "#D9DDDC", //TEXT COLOR 
 	good: "#72bf6a", //GOOD COLOR
 	warn: "#FFE135", //WARM COLOR
-	bad: "#BF0A30"
-
-
+	bad: "#BF0A30", //BAD COLOR
 }
