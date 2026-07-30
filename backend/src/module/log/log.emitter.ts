@@ -1,7 +1,7 @@
 import EventEmitter from "node:events";
 
 export class LOG_EMIT extends EventEmitter{
-	private redis:any;
+	protected redis:any;
 	private app:any;
 	constructor(){
 		super();

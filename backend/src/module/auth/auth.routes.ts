@@ -5,7 +5,7 @@ import { signup_schema } from "../auth/schema/signup.schema.ts";
 
 
 export function AUTH_ROUTER(fastify:any, opts:{}){
-	const auth_service = new AuthService(fastify.pg.rep);
+	const auth_service = new AuthService(fastify.pg.main);
 	const auth = new Auth(auth_service);
 
 	fastify.post("/auth/login", { schema: login_schema }, auth.login);

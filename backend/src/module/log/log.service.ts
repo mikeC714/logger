@@ -1,43 +1,37 @@
-import { EventEmitter } from "node:stream";
 import { AppError } from "../../errors/app.err.ts";
 import { LogError } from "../../errors/log.err.ts";
-import { LOG_EMIT } from "./log.emitter.ts";	
-import fs from "node:fs";
+import EventEmitter from "node:events";	
+import { createWriteStream } from "node:fs";
+import path from "node:path";
 import zlib from "node:zlib";
 import { pipeline } from "node:stream/promises";
-import { Readable, Writable} from "node:stream";	
+import { Readable } from "node:stream";	
+import type { LOG } from "../../types/log.d.ts"
 import crypto from "node:crypto";
 
-enum STATUS{
-	"public",
-	"private"
-}
-interface LOG {
-	id:string;
-	logName: string;
-	status: STATUS;
-	// log:Buffer[];	
-}
 
-class STREAM extends LOG_EMIT{
-	private redis:any;
+
+
+export class STREAM{
 	private MAX_LENGTH:number = 5_000;
+	private redis:any;
+	constructor(redis:any){
+		this.redis = redis
+	}
 
+		
 	//create new stream
 	//@param logId{string}
 	//@param username{string}
 	//this function will create a new redis stream 
 	public async init(username:string, logName:string){
-		let connection:boolean = false;
 		try{
 			await this.redis.xadd(
 				`LOG:user:${username}:${logName}`,
 				"*", 
 				"log_name", logName, 
-				"action", "write"
+				"action", "INIT"
 			);
-			connection = true 	
-			await this.listen(username, logName, connection);
 		}catch(err){
 			throw err;
 		}	
@@ -47,135 +41,128 @@ class STREAM extends LOG_EMIT{
 	//reads the length of the stream's batch using it's id
 	//if length is === 0 stream is pushed null stopping the stream
 	//else the reasults are iterated and pushed to the read stream
-
-	private CHECK_MAX_LENGTH = async(username:string, logName:string):Promise<{maxed:boolean, startId:string}> => {
+	private CHECK_MAX_LENGTH = async(username:string, logName:string):Promise< null | {startId:string, maxed:boolean} | string> => {
 		let lastId:string = ""; 
-		let maxed:boolean = false;
 		let startId:string = "";
-
-		const read = new Readable({ objectMode:true, read() {} });
-		const write = new Writable({
-			write(){
-
-			}
-		});
-		const gzip = zlib.createGzip();
-
+		let maxed:boolean = false;
+		let results:[string, string[]] | null;
 		try{
 			const LOG_LENGTH = await this.redis.xlen(`LOG:user:${username}:${logName}`)
 			if(LOG_LENGTH >= this.MAX_LENGTH){
-				const results = await this.redis.xrange(
+				results = await this.redis.xrange(
 					`LOG:user:${username}:${logName}`,
 					"-",
 					"+",
 					"COUNT",
 					this.MAX_LENGTH
 				);
-				if(!results || results.length === 0){
-					read.push(null);	
+				if(!results){
+					return null;	
 				}
-
-				for(const [id, chunks] of results){
-					const data = Object.fromEntries(chunks);
-					read.push({ id, data });
-					lastId = id;
-				}
-
-				read.push(null);
-				await pipeline(read, gzip, write);
 				startId = lastId;
-				maxed = true;
+				await this.redis.xtrim(`LOG:user:${username}:${logName}`, 'MINID', lastId);
 
-				await this.redis.xtrim(`LOG:user${username}:${logName}`, 'MINID', lastId);
-			} 
-			return{
-				maxed,
-				startId
+				return await this.saveToDisk(results, logName)
 			}
+			return{ 
+				startId,
+				maxed
+			}; 
 		}catch(err){
-			write.destroy();
-			read.destroy();
 			throw err;
 		}	
 	}
-
-	 private listen = async(username:string, logName:string, connection:boolean) => {
-		 if(connection !== true) return;
-		 const { maxed } = await this.CHECK_MAX_LENGTH(username, logName);
-
-		if(maxed){
-			logName = await this.incrementName(logName);
+	 private async *iterate(data:[string, string[]]): AsyncGenerator<string>{
+		for(const log of data){
+			yield JSON.stringify(log) + '\n';
 		}
+	} 
 
-		 this.on("data", async(data) => {
-			 await this.redis.xadd(
-				 `LOG:user:${username}`,
-				 "*",
-				 "log_name",logName,
-				 "timestamp", Date.now(),
-				 "message", data.message,
-				 "service", data.service
-			 ) 
-		 })
-	 }
-
-}
-
-export class LoggerService{
-	private db:any;
-	private redis:any;
-
-	constructor(){
-		this.init();
-	}
-
-	private async init(){
-	}
-
-	private async connect(logName:string, logId:string){
-		return async function gen_tui(){
-			//TODO
-				//GEN TUI WITH LOGS FOUND USING log_id WITH log_name PROBABLY GOING TO USE REDIS TO STORE LOGS NOT TOO SURE
-
-		}
-	}
-
-	private async organize(err:any):Promise<Array<Error>>{
-		let list:any = [];
-		const categories = ["4","3","5","2"];
-		const errStatus = String(err?.status_code);
-		categories.forEach((num) =>{ 
-			if(errStatus[0] == num) list.push(err); 
-		})
-		return list;
-	}
-
-	public async createLog(logDetails:LOG, userId:string):Promise<LOG>{
-		const { id, logName, status } = logDetails; 
-		if(!id) throw new AppError("ID wasn't provided failed to make request.", 400);
-		if(!logName || !status) throw new AppError("Failed to provide all needed feilds. Please choose a LOG NAME, and the status of the log.",400);
+	private saveToDisk = async(data:[string, string[]], logName:string):Promise<any> => {
+		const date = new Date(Date.now()).toLocaleString('en-US', {
+			month: '2-digit',
+			day: '2-digit',
+			year: 'numeric'
+		});
+		const __dirname = import.meta.dirname;
+		const target = path.join(__dirname, logName, `${date}.txt`)
+		const read = Readable.from(this.iterate(data));
+		const write = createWriteStream(target, { encoding: "utf-8" })
+		const gzip = zlib.createGzip();
 		try{
-			await stream.process();		
+			await pipeline(read, gzip, write);
 		}catch(err){
 			throw err;
 		}
-		return logDetails;
+	} 
+
+
+	 async write(data:LOG,username:string){
+		try{
+			await this.CHECK_MAX_LENGTH(username, data.logName);
+			await this.redis.xadd(
+				`LOG:user:${username}:${data.logName}`,
+				"*",
+				"log_name",data.logName,
+				"action","LOG"
+			)
+		}catch(err){
+			throw err;
+		}	
+	 }
+}
+
+export class LoggerService extends EventEmitter{
+	private stream:Map<string, STREAM> = new Map();
+	private redis:any;
+	logName:string;
+	logId:string;
+	username:string;
+
+	constructor({ username, logId, logName }:LOG, redis:any){
+		super();
+		this.logId = logId;
+		this.logName = logName
+		this.username = username;
+		this.redis = redis;
+		this.registerEvents();
 	}
 
-	async logErr(err:any, logId:string):Promise<void>{
+
+	private async registerEvents(){
+		this.on("error", () => {});
+		this.on("connect", async() => {
+			//connect to redis
+			//check redis health
+			//then return connected
+			return "connected";
+		});
+	}
+
+	public async createLog():Promise<void>{
+		if(!this.logId) this.emit("ID wasn't provided failed to make request.");
+		if(!this.logName) this.emit("ID wasn't provided failed to make request.");
+
+		if(!this.logId) throw new AppError("ID wasn't provided failed to make request.", 400);
+		if(!this.logName) throw new AppError("Failed to provide all needed feilds. Please choose a LOG NAME, and the status of the log.",400);
+
 		try{
-			await this.db.query(
-				`INSERT INTO logs(error)
-					VALUES($1)
-					WHERE log_id = $2
-				`,[err, logId]
-			);	
-		}catch(error:any){
-			throw {
-				status: error.status || error.statusCode,
-				message: error.message,
-				trace: error.stack   
-			}; 
+			const stream = new STREAM(this.redis);
+			this.stream.set(this.logId, stream);
+			await stream.init(this.username, this.logName);		
+		}catch(err:any){
+			this.emit(err);
+			throw err;
+		}
+	}
+
+	public async log(data:{}, logId:string):Promise<void>{
+		try{
+			const stream:any = this.stream.get(logId)
+			await stream.write(data)
+		}catch(err:any){
+			this.emit(err);
+			throw err 
 		}			
 	};
 	// async log(body:)
