@@ -12,7 +12,7 @@ export class LogService{
 	});
 	private log_limit:number = 8_000;
 
-	checkStreamLength = async(projectKey:string) =>{
+	private checkStreamLength = async(projectKey:string) =>{
 		try{
 			const info:any = await this.redis.xinfo("STREAM",projectKey);
 			const len:number = info[info.indexOf("length") +1];
@@ -34,7 +34,7 @@ export class LogService{
 		}
 	};	
 	writeToStream = async(projectKey:string, batch:Array<object>) => {
-		if(batch.length < this.batch_limit) throw new Error() // TEST.. DONT CRASH ON PRODUCTION JUST LOG TO LOGGER TO NOTFY ON ERROR HICCUP MAY BE OCCURING CAUSING A DATA LOSS
+		if(batch.length < this.batch_limit) return "Limit has not been reached.";// TEST.. DONT CRASH ON PRODUCTION JUST LOG TO LOGGER TO NOTFY ON ERROR HICCUP MAY BE OCCURING CAUSING A DATA LOSS
 		try{
 			await this.checkStreamLength(projectKey);
 			const chunkArr = batch.map(async chunk => {
@@ -52,6 +52,7 @@ export class LogService{
 		}
 	}	
 	readFromStream = async(projectKey:string) => {
+		let results:boolean = false;
 		try{
 			const info:any = await this.redis.xinfo("STREAM",projectKey);
 			const len:number = info[info.indexOf("length") +1];
@@ -65,11 +66,11 @@ export class LogService{
 					"COUNT",
 					8000
 				)
-				await stream.saveToDisk(projectKey, data);
+				results = await stream.saveToDisk(projectKey, data);
 			};
-			
+			return results;
 		}catch(err){
-
+			throw err;
 		}
 	}
 }
