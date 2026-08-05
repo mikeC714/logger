@@ -1,11 +1,10 @@
 import { Pool } from "pg";
-import { LoggerService } from "../log/log.service.ts";
-const logger = new LoggerService();
 
-export class Health{
-	constructor(private db:Pool, private redis:any){
-		if(!db) throw new Error("Failed to provide a db.");
-		if(!redis) throw new Error("Failed to provide a RedisClient.");
+export class HealthService{
+	constructor(private db:Pool, private redis:any, private logger:any){
+		this.db = db;
+		this.redis = redis;
+		this.logger = logger;
 	}
 
 	async PING(reqId:string){
@@ -27,8 +26,8 @@ export class Health{
 				redisErr = error; 
 			})
 
-			if(!reply && redisErr !== null) await logger.log_err({ title: "REDIS", error: redisErr  } , reqId);	
-			if(dbConnection !== true && dbConnection !== null) await logger.log_err({ title: "DB", error:dbErr }, reqId);
+			if(!reply && redisErr !== null) await this.logger.error({ title: "REDIS", error: redisErr  } , reqId);	
+			if(dbConnection !== true && dbConnection !== null) await this.logger.error({ title: "DB", error:dbErr }, reqId);
 
 			return {
 				dbConnection,

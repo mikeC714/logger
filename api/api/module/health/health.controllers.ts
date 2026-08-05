@@ -1,13 +1,15 @@
-import { Health } from "../services/health.service.ts";
-import { db, test_db } from "../plugins/db.ts";
-import { redis } from "../plugins/redis.ts";
-import { FastifyRequest, FastifyReply } from "fastify";
-const health = new Health(db, redis);
+import type { FastifyRequest, FastifyReply } from "fastify";
 
+export class HealthController{
+	health:any;
+	constructor(health:any){
+		this.health = health;
+	}
 
+	healthCheck = async(req:FastifyRequest, rep:FastifyReply) => {
 
-export async function health_check(request:FastifyRequest, reply:FastifyReply){
-	const res = await health.PING();  
-	return reply.status(200).send(res);
+		const res = await this.health.PING();  
+		return rep.status(200).send(res);
+	}
 }
 

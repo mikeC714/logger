@@ -1,22 +1,33 @@
 import { Redis } from "ioredis";
 import { AppError } from "../api/errors/app.err.ts";
-import { Ws } from "./ws.ts";
-import { createReadStream, createWriteStream } from "node:fs";
-import { pipeline } from "node:stream/promises";
-import { Readable } from "node:stream";
-import zlib from "node:zlib"; 
-import path from "node:path";
 
-
+type VALUES = {
+	[key:string]:string;
+};
+type MSG_DATA = {
+	[key:string]: {}
+};
 export class Stream{
-	private redis:Redis = new Redis({});	
+	private batch_limit:number = 20;
+	private log_limit:number = 8_000;
+	socketMethods?:any = null;
+	socket?:any;
+	redis?:Redis | any;
+	archive?:any;
+	constructor(redis:Redis, socket:any, socketMethods:any, archive:any){
+		this.redis = redis;
+		this.socket = socket;
+		this.socketMethods = socketMethods;
+		this.archive = archive
+	}
 
-	createGroup = async(projectKey:string):Promise<boolean | string | unknown> => {
+
+	public createGroup = async(projectKey:string):Promise<boolean | string | unknown> => {
 		try{
 			const grp:unknown = await this.redis.xgroup(
 				"CREATE",
 				projectKey,
-			    `${projectKey}-grp`,
+				`${projectKey}-grp`,
 				"$",
 				"MKSTREAM"
 			)
@@ -24,58 +35,62 @@ export class Stream{
 		}catch(err:any){
 			if(!err.message.includes("BUSYGROUP")) throw err;
 		}
-	}
+	};
 
-	readMessages = async(projectKey:string, consumer:string):Promise<[string, string[]] | unknown> => {
+	public writeToStream = async(projectKey:string, batch:Array<object>) => {
+		if(batch.length < this.batch_limit) return "Limit has not been reached.";// TEST.. DONT CRASH ON PRODUCTION JUST LOG TO LOGGER TO NOTFY ON ERROR HICCUP MAY BE OCCURING CAUSING A DATA LOSS
+		try{
+			await this.archive.checkStreamLength(projectKey);
+
+			// chunk = {lvl:string, msg:string, meta:{}} 
+			const chunkArr = batch.map(async chunk => {
+			const payload = typeof chunk === "object" ? JSON.stringify(chunk) : chunk;
+				return await this.redis.xadd(
+					projectKey,
+					"MAXLEN","~", this.log_limit,
+					"*",
+					payload
+				);	
+			});
+			return await Promise.all(chunkArr);
+		}catch(err){
+			throw err;
+		}
+	};	
+
+	public readMessages = async(projectKey:string, consumer:string):Promise<void> => {
 		try{
 			const results = await this.redis.xreadgroup(
 				"GROUP", `${projectKey}-grp`, consumer,
 				"COUNT", 20,
 				"BLOCK", 8000,
 				"STREAMS", projectKey, ">"
-
 			)
-			return results;
+			 await this.processMsg(results, projectKey, consumer);
 		}catch(err){
 			throw err;
 		}
-	}
+	};
 
-	processMsg = async(projectKey:string, consumer:string) => {
-		let msgData:any = {};
+	private processMsg = async(msgs:[string, string[]] | any, projectKey:string, consumer:string):Promise<any> => {
+		let msgData:MSG_DATA = {};
+		let values:VALUES = {}; 
 		try{
 			while(true){
-				const msgs:any = await this.readMessages(projectKey, consumer);
-				if(!msgs) continue;
-
+				if(!msgs) break;
 				for(const [_, data] of msgs){
 					for(const [msgId, fields] of data){
 						for(let i = 0; i < fields.length; i += 2){
-							msgData[fields[i]] = fields[i+1];
-
-							// WRITE TO WEBSOCKET
-							// :ARCHIVE
-							// :MAIN
-			
+							values[fields[i]] = fields[i+1];
 							await this.redis.xack(projectKey, consumer, msgId);
 						}	
+						msgData[msgId] = values; 
+						return await this.socketMethods.writeToSocket(projectKey, msgData); 
 					}
 				}
-				
 			}
 		}catch(err:any){
 			throw new AppError("Stream Failure", err.statusCode);
 		}	
-	}
-
-	// saveToDisk = async(projectKey:string, data:Array<[string, string[]]>):Promise<boolean> => {
-	// 	const data = await this.redis.xrange(
-	// 		projectKey,
-	// 		"-",
-	// 		lastId,
-	// 		"COUNT",
-	// 		8000
-	// 	)
-	// 	return true; 
-	// }
+	};
 }
