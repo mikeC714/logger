@@ -7,7 +7,6 @@ export class HealthController{
 	}
 
 	healthCheck = async(req:FastifyRequest, rep:FastifyReply) => {
-
 		const res = await this.health.PING();  
 		return rep.status(200).send(res);
 	}

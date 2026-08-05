@@ -14,10 +14,18 @@ export class Log{
 		this.archive = archive;
 	}
 
-	log = async(req:FastifyRequest, rep:FastifyReply) => {
-		
+	log = async(req:FastifyRequest<{Body: [projectKey:string, object[]]}>, rep:FastifyReply) => {
+		//recieve log
+		const data = req.body; 
+		{
+			//check length;
+			await this.archive.checkStreamLength(data[0])
+		};
+		//once check is done write and process the msg
+		await this.stream.writeToStream(data[0], data[1]);
+		await this.stream.processMsg(data[0]);
 
-		rep.code(200).send({ ok:true })
-	}
+		return rep.code(201).send({ ok:true })
+	};
 
 }

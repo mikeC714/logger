@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
 import type { FastifyReply, FastifyRequest, FastifyError } from "fastify"; 
-import { AuthError } from "../../errors/auth.err.ts";
-import { AppError } from "../../errors/app.err.ts";
+import { AuthError } from "../errors/auth.err.ts";
+import { AppError } from "../errors/app.err.ts";
 
 export async function err_plugin(fastify:any, opts:{}){
 	fastify.setErrorHandler((err:FastifyError, req:FastifyRequest, rep:FastifyReply) => {

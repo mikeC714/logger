@@ -12,7 +12,8 @@ function ws_plugin(fastify:any, opts:{}){
 	});	
 
 	fastify.decorate("io",io);
-
+	
+	let connectionStatus:boolean = false;
 
 	io.use((socket, next) => {
 		const { key, projectKey } = socket.handshake.auth;
@@ -25,12 +26,17 @@ function ws_plugin(fastify:any, opts:{}){
 	});
 
 	io.on("connect", (socket) => {
+		connectionStatus = true;
 		if(socket.recovered){
 			fastify.log.info(`Socket:${socket} had a connection blip.`);
 		}
 		const { projectKey } = socket.handshake.auth;
 		socket.join(projectKey);
-		socket.on("disconnect", async() => await WsHandlers.handleDisconnect(fastify.redis, projectKey));
+		socket.on("disconnect", async() => {
+			connectionStatus = false;
+			await WsHandlers.handleDisconnect(fastify.redis, projectKey)
+		});
+		io.emit("connected", connectionStatus)
 	});
 	fastify.addHook('onClose', (done) => {
 		//close client but connect to queue 

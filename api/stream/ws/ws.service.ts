@@ -1,5 +1,5 @@
 export class SocketService{
-	protected socket:any = null;
+	socket:any = null;
 	constructor(socket:any){
 		this.socket = socket;
 	}

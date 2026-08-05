@@ -33,5 +33,5 @@
     "skipLibCheck": true
   },
   "files":["./api/types/fastify.d.ts"],
-  "include": ["./api/**/*"]
+  "include": ["./api/**/**/*"]
 }

@@ -29,10 +29,11 @@ export class Stream{
 				`${projectKey}-grp`,
 				"$",
 				"MKSTREAM"
-			)
-			return grp === "OK" ? true : false;
+			);
+			return grp; 
 		}catch(err:any){
 			if(!err.message.includes("BUSYGROUP")) throw err;
+			throw err;
 		}
 	};
 
@@ -57,31 +58,26 @@ export class Stream{
 		}
 	};	
 
-	public readMessages = async(projectKey:string, consumer:string):Promise<void> => {
+	public processMsg = async(projectKey:string):Promise<any> =>{
+		let values:VALUES = {};
+		let msgData:MSG_DATA = {};
 		try{
-			const results = await this.redis.xreadgroup(
-				"GROUP", `${projectKey}-grp`, consumer,
+			const msgs = await this.redis.xreadgroup(
+				"GROUP", `${projectKey}-grp`, `${projectKey}-rd`,
 				"COUNT", 20,
 				"BLOCK", 8000,
 				"STREAMS", projectKey, ">"
-			)
-			 await this.processMsg(results, projectKey, consumer);
-		}catch(err){
-			throw err;
-		}
-	};
+			).catch((err:any) => {
+				throw new AppError(`Process Msg failure. ERROR:${err}`, err.statusCode || 500); 
+			}); 
 
-	private processMsg = async(msgs:[string, string[]] | any, projectKey:string, consumer:string):Promise<any> => {
-		let msgData:MSG_DATA = {};
-		let values:VALUES = {}; 
-		try{
 			while(true){
 				if(!msgs) break;
 				for(const [_, data] of msgs){
 					for(const [msgId, fields] of data){
 						for(let i = 0; i < fields.length; i += 2){
 							values[fields[i]] = fields[i+1];
-							await this.redis.xack(projectKey, consumer, msgId);
+							await this.redis.xack(projectKey, `${projectKey}-rd`, msgId);
 						}	
 						msgData[msgId] = values; 
 						return await this.socketMethods.writeToSocket(projectKey, msgData); 
@@ -89,7 +85,7 @@ export class Stream{
 				}
 			}
 		}catch(err:any){
-			throw new AppError("Stream Failure", err.statusCode);
+			throw err;
 		}	
 	};
 }

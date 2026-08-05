@@ -3,11 +3,9 @@ import { Redis } from "ioredis";
 export class Archive{
 	private log_limit:number = 8_000;
 	socket:any = null;
-	stream:any = null;
 	logger:any = null;
 	redis:Redis;
-	constructor(stream:any, logger:any, redis:Redis, socket:any){
-		this.stream = stream;
+	constructor(logger:any, redis:Redis, socket:any){
 		this.socket = socket;
 		this.logger = logger;
 		this.redis = redis;
