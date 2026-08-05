@@ -58,7 +58,7 @@ export class Stream{
 		}
 	};	
 
-	public processMsg = async(projectKey:string):Promise<any> =>{
+	public processMsg = async(projectKey:string):Promise<any> => {
 		let values:VALUES = {};
 		let msgData:MSG_DATA = {};
 		try{
@@ -81,11 +81,11 @@ export class Stream{
 						}	
 						msgData[msgId] = values; 
 						return await this.socketMethods.writeToSocket(projectKey, msgData); 
-					}
-				}
-			}
+					};
+				};
+			};
 		}catch(err:any){
 			throw err;
-		}	
+		};	
 	};
 }

@@ -38,6 +38,9 @@ function ws_plugin(fastify:any, opts:{}){
 		});
 		io.emit("connected", connectionStatus)
 	});
+
+	io.on("connection_error", )
+
 	fastify.addHook('onClose', (done) => {
 		//close client but connect to queue 
 	})
