@@ -14,13 +14,12 @@ export class Stream{
 	socket?:any;
 	redis?:Redis | any;
 	archive?:any;
-	constructor(redis:Redis, socket:any, socketMethods:any, archive:any){
+	constructor(redis?:Redis, socket?:any, socketMethods?:any, archive?:any){
 		this.redis = redis;
 		this.socket = socket;
 		this.socketMethods = socketMethods;
 		this.archive = archive
 	}
-
 
 	public createGroup = async(projectKey:string):Promise<boolean | string | unknown> => {
 		try{
