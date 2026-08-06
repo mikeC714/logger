@@ -16,7 +16,7 @@ type NOTI = {
 	version:"",
 	errorCode:"",
 	errorStatus:0,
-	timeStamp:""
+	timeStamp:null
 };
 
 let LEVELS:any = ["info","warn","error","fatal","debug",];
@@ -50,14 +50,15 @@ export class Logger{
 		this.init();
 	}
 
+	private init = async() => {
+		await this.stream.createGroup(this.config.projectKey);	
+	};
+
 	public log = async(lvl:string, msg:string, meta:object = metaBody) => {
 		this.batch.push({ lvl, msg, meta });
 		if(this.batch.length >= this.batch_limit) this.flush();	
 	};
 
-	private init = async() => {
-		await this.stream.createGroup(this.config.projectKey);	
-	};
 
 	private notify = async(lvl:string, msg:string, meta:object = metaBody) => {
 		if(this.config.notitifications.send === true && this.config.notitifications.recipient !== "" || this.config.notitifications.recipient !== null){

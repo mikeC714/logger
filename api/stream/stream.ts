@@ -1,12 +1,9 @@
 import { Redis } from "ioredis";
 import { AppError } from "../api/errors/app.err.ts";
 
-type VALUES = {
-	[key:string]:string;
-};
-type MSG_DATA = {
-	[key:string]: {}
-};
+type VALUES = Record<string, { }>;
+type MSG_DATA = Record<string, { }>;
+
 export class Stream{
 	private batch_limit:number = 20;
 	private log_limit:number = 8_000;
@@ -49,7 +46,7 @@ export class Stream{
 					projectKey,
 					"MAXLEN","~", this.log_limit,
 					"*",
-					payload
+					"data", payload
 				);	
 			});
 			return await Promise.all(chunkArr);
@@ -79,8 +76,14 @@ export class Stream{
 							values[fields[i]] = fields[i+1];
 							await this.redis.xack(projectKey, `${projectKey}-rd`, msgId);
 						}	
+						/*
+						 *{
+						 * "msgId": {lvl:string, msg:string, meta:{}},
+						 * "msgId": {lvl:string, msg:string, meta:{}}
+						 *}
+						* */
 						msgData[msgId] = values; 
-						return await this.socketMethods.writeToSocket(projectKey, msgData); 
+						return await this.socketMethods.writeToSocket(projectKey, msgData, "live"); 
 					};
 				};
 			};
