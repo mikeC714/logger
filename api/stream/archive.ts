@@ -1,7 +1,7 @@
 import { Redis } from "ioredis";
 
 export class Archive{
-	private log_limit:number = 8_000;
+	private log_limit:number = 100_000;
 	socket:any = null;
 	logger:any = null;
 	redis:Redis;
@@ -25,11 +25,8 @@ export class Archive{
 				await this.socket.writeToSocket(projectKey, data, "archive");
 				await this.redis.xtrim(
 					projectKey,
-					"MINID",
-					"~", 
-					lastId,
-					'LIMIT',
-					"8000"
+					"MINID", "~", lastId,
+					'LIMIT', this.log_limit	
 				);
 			};
 			return limitReached;
@@ -44,11 +41,8 @@ export class Archive{
 			const lastId:string = info[info.indexOf("last-generated-id") +1];
 
 			const data = await this.redis.xrange(
-				projectKey,
-				"-",
-				lastId,
-				"COUNT",
-				8000
+				projectKey, "-", lastId,
+				"COUNT", this.log_limit 
 			);
 			return data;
 		}catch(err){

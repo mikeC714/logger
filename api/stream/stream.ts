@@ -6,7 +6,7 @@ type MSG_DATA = Record<string, { }>;
 
 export class Stream{
 	private batch_limit:number = 20;
-	private log_limit:number = 8_000;
+	private log_limit:number = 100_000;
 	socketMethods?:any = null;
 	socket?:any;
 	redis?:Redis | any;

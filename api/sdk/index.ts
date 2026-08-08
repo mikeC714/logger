@@ -56,7 +56,15 @@ export class Logger{
 
 	public log = async(lvl:string, msg:string, meta:object = metaBody) => {
 		this.batch.push({ lvl, msg, meta });
-		if(this.batch.length >= this.batch_limit) this.flush();	
+		try{
+			if(this.batch.length >= this.batch_limit) await this.flush();	
+		}catch{}
+		finally{
+			if(this.batch.length !== this.batch_limit && this.batch.length !== 0){
+				await this.flush();	
+			}
+			return;
+		}
 	};
 
 
