@@ -1,0 +1,21 @@
+{
+  "name": "client",
+  "module": "main.ts",
+  "type": "module",
+  "private": true,
+  "scripts":{
+	"test": "bun test --env-file=.env"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.1.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.4.5",
+    "ioredis": "^5.11.1",
+    "socket.io-client": "^4.8.3"
+  }
+}
