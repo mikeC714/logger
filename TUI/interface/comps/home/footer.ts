@@ -14,15 +14,15 @@ class WarnCount extends Count{
 const warnCount = new WarnCount();
 const errCount = new ErrCount();
 
-export function Footer(render:any){
-	const container = new BoxRenderable(render, {
+export function Footer(main:any){
+	const container = new BoxRenderable(main, {
 		id:"footer"
 	});
-	container.add(new TextRenderable(render, { content: "[c] create [d] delete [/] search" }));
+	container.add(new TextRenderable(main, { content: "[c] create [d] delete [/] search" }));
 
-	const errorCounter = new TextRenderable(render, { id:"errorCount", content: "0 errors"})
-	const warnCounter = new TextRenderable(render, { id:"warnCount", content: "0 warnings"})
-	const countBox = new BoxRenderable(render, { flexDirection:"row", gap: 2 });
+	const errorCounter = new TextRenderable(main, { id:"errorCount", content: "0 errors"})
+	const warnCounter = new TextRenderable(main, { id:"warnCount", content: "0 warnings"})
+	const countBox = new BoxRenderable(main, { flexDirection:"row", gap: 2 });
 
 	countBox.add(errorCounter);
 	countBox.add(warnCounter);
@@ -33,16 +33,14 @@ export function Footer(render:any){
 		const currCount = errCount.get().count;
 		errorCounter.content = `${currCount} errors`;
 
-		render.requestRender();
-		return errorCounter;
+		main.requestRender();
 	};
 	function updateWarnCount(warn:number){
 		warnCount.set(warn);
 		const currCount = warnCount.get().count;
 		warnCounter.content = `${currCount} warnings`
 
-		render.requestRender();
-		return warnCounter;
+		main.requestRender();
 	};
 
 	return{

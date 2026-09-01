@@ -8,45 +8,45 @@ type SEARCH_RESULTS = Array<Record<string, {
 }>>
 
 
-export function SideBar(render:any, paths:Map<string, string>, searchResults: SEARCH_RESULTS | null, fn:(path:string | null) => void){
-		const sideBarBox = new BoxRenderable(render, {
+export function SideBar(main:any, paths:ReadonlyMap<string, string>, searchResults: SEARCH_RESULTS | null, fn:(path:string | null) => void){
+		const sideBarBox = new BoxRenderable(main, {
 			id:"sideBar",
 			flexDirection:"column"
 		});
-		const contentBox = new BoxRenderable(render,{
+		const contentBox = new BoxRenderable(main,{
 			id:"contentBox"
 		});
 
 		if(searchResults !== null){
 			searchResults.map((c:any) => {
-				const logName = new TextRenderable(render, { id:"logName" });
+				const logName = new TextRenderable(main, { id:"logName" });
 				logName.content = c.logName;
 				contentBox.add(logName);
 			});
 		}else{
 			for(const [key, _] of paths){
-				const logName = new TextRenderable(render, { id:"logName" });
+				const logName = new TextRenderable(main, { id:"logName" });
 				logName.content = key;
 				contentBox.add(logName);
 			}
 		};
 
 		function hover(){
-			const list = new BoxRenderable(render, { flexDirection:"column" });
+			const list = new BoxRenderable(main, { flexDirection:"column" });
 
 			for(const [key, path] of paths){
-				const row = new BoxRenderable(render,{
+				const row = new BoxRenderable(main,{
 					height:1,
 					onMouseOver(e:MouseEvent){
 						fn(key as string);
-						render.requestRender();
+						main.requestRender();
 					},
 					onMouseOut(e:MouseEvent){
 						fn(null);
-						render.requestRender();
+						main.requestRender();
 					}
 				});
-				row.add(new TextRenderable(render, { content: path }))
+				row.add(new TextRenderable(main, { content: path }))
 				list.add(row);
 			}
 			return list;

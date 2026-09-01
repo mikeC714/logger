@@ -1,15 +1,14 @@
 import { BoxRenderable } from "@opentui/core";	 
-import { main } from "../main.ts";
 import { SearchBar } from "../comps/home/searchbar.ts";
 import { SideBar } from "../comps/home/sidebar.ts";
 import { Body } from "../comps/home/body.ts";
 import { Footer } from "../comps/home/footer.ts";
 
 
-export function HomePage(paths:Map<string,string>){
+export function HomePage(main:any, paths:ReadonlyMap<string, string>){
 	let hoverData:string | null = "";
 
-	const { searchBarContainer, searchResults } = SearchBar(paths);
+	const { searchBarContainer, searchResults } = SearchBar(main, paths);
 	const sideBar = SideBar(main, paths, searchResults, (path:string | null) => hoverData = path);
 	const body = Body(hoverData);
 	const { footer, setErrCount, setWarnCount } = Footer(main);

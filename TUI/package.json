@@ -2,6 +2,9 @@
   "name": "client",
   "module": "main.ts",
   "type": "module",
+  "bin": {
+	  "tlog": "./dist/main.js"
+  },
   "private": true,
   "scripts":{
 	"test": "bun test --env-file=.env"

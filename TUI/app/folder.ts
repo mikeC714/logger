@@ -6,6 +6,10 @@ export class Folder {
 	protected dirPath = logDir;
 	protected PathMap:Map<string, string> = new Map();
 
+	public data = ():ReadonlyMap<string, string> => {
+		return this.PathMap; 
+	}	
+
 	get = async(name:string) => {
 		if(this.PathMap.has(name)) return this.PathMap.get(name);
 		return;

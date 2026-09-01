@@ -1,8 +1,7 @@
-import { main } from "../../main.ts";
 import { BoxRenderable, InputRenderable, InputRenderableEvents, t, bold, Box } from "@opentui/core";
 
 
-export function SearchBar(paths:Map<string,string>){
+export function SearchBar(main:any, paths:() => ReadonlyMap<string, string>){
 	const searchBarContainer = new BoxRenderable(main, {
 		id:"searchBar"
 	});
