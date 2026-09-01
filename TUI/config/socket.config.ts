@@ -4,7 +4,7 @@ import type { SOCKET_DATA } from "../types/socket.d.ts";
 import type { JSON } from "../types/json.d.ts";
 
 
-const socket = io(process.env.SERVER,{
+export const socket = io(process.env.SERVER,{
 	auth:{
 		key:process.env.SOCKET_KEY,
 	},
@@ -22,6 +22,6 @@ socket.on("msg", (fn:(ack:boolean) => boolean) => {
 	fn(true);
 });
 socket.on("ackMsg", (msg:JSON<SOCKET_DATA>) => {
-	stream.msg(msg);
+	stream.msg(JSON.parse(msg));
 });
 
