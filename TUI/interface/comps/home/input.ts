@@ -20,6 +20,7 @@ export function Input(type:string, main:any){
 		case "create":
 			placeholder = "Enter new log name";
 			input.on(InputRenderableEvents.ENTER, (value:string) => {
+				value = value.toLowerCase().trim();
 				methods.create(value);
 			});	
 		break;
@@ -32,7 +33,7 @@ export function Input(type:string, main:any){
 		case "search":
 			placeholder = "Enter log name";
 			input.on(InputRenderableEvents.ENTER, (value:string) => {
-				methods.search(value);
+				return methods.search(value);
 			});	
 		break;
 	}	
