@@ -6,8 +6,10 @@ import os from "node:os";
 
 function MAIN(){
 	Socket();
+	buildTUI();
 	process.on("SIGINT", () => {
 		buildTUI(true)
 		process.exit(0);
 	});
-}
+};
+MAIN();

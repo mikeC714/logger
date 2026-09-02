@@ -1,43 +1,108 @@
-import { BoxRenderable, InputRenderable, InputRenderableEvents, t, bold, Box } from "@opentui/core";
-import { Methods } from "../../methods.ts";
+import { BoxRenderable, TextRenderable, InputRenderable, InputRenderableEvents } from "@opentui/core";
+import { PALETTE } from "../../palette.ts";
 
+export type OverlayMode = "create" | "delete" | "search";
 
-const methods = new Methods();
+export interface OverlayCallbacks {
+	onSubmit: (mode: OverlayMode, value: string) => void;
+	onCancel: (mode: OverlayMode) => void;
+}
 
-export function Input(type:string, main:any){
-	let placeholder:string = ""
-
+export function Overlay(main: any, callbacks: OverlayCallbacks) {
 	const container = new BoxRenderable(main, {
-		id:"inputContainer",
-	});	
-	const input = new InputRenderable(main, {
-		id:"input",
-		focusedBackgroundColor:"",
-		placeholder:placeholder
+		id: "overlay",
+		position: "absolute",
+		left: "20%",
+		top: "40%",
+		width: "60%",
+		height: 5,
+		border: true,
+		borderColor: PALETTE.border,
+		backgroundColor: PALETTE.bg,
+		titleAlignment: "left",
+		flexDirection: "column",
+		padding: 1,
+		zIndex: 100,
+		visible: false,
 	});
 
-	switch(type){
-		case "create":
-			placeholder = "Enter new log name";
-			input.on(InputRenderableEvents.ENTER, (value:string) => {
-				value = value.toLowerCase().trim();
-				methods.create(value);
-			});	
-		break;
-		case "delete":
-			placeholder = "Enter log to delete.";
-			input.on(InputRenderableEvents.ENTER, (value:string) => {
-				methods.delete(value);
-			});	
-		break;
-		case "search":
-			placeholder = "Enter log name";
-			input.on(InputRenderableEvents.ENTER, (value:string) => {
-				return methods.search(value);
-			});	
-		break;
-	}	
-	container.add(input);
+	const promptText = new TextRenderable(main, { id: "overlay-prompt", content: "", fg: PALETTE.text });
+	const input = new InputRenderable(main, { id: "overlay-input", width: "100%", value: "" });
+	const hintText = new TextRenderable(main, {
+		id: "overlay-hint",
+		content: "Enter to confirm  ·  Esc to cancel",
+		fg: PALETTE.border,
+	});
 
-	return container; 
+	container.add(promptText);
+	container.add(input);
+	container.add(hintText);
+
+	let mode: OverlayMode | null = null;
+	let deleteTarget: string | null = null;
+
+	function open(nextMode: OverlayMode, target?: string) {
+		mode = nextMode;
+		deleteTarget = nextMode === "delete" ? target ?? null : null;
+		input.value = "";
+		hintText.content = "Enter to confirm  ·  Esc to cancel";
+		hintText.fg = PALETTE.border;
+
+		switch (nextMode) {
+			case "create":
+				container.title = "Create log";
+				promptText.content = "New logName:";
+				input.placeholder = "logName";
+				break;
+			case "delete":
+				container.title = "Delete log";
+				promptText.content = `Type "${deleteTarget}" to confirm deletion:`;
+				input.placeholder = deleteTarget ?? "";
+				break;
+			case "search":
+				container.title = "Search logs";
+				promptText.content = "Filter logNames:";
+				input.placeholder = "search text";
+				break;
+		}
+
+		container.visible = true;
+		input.focus();
+	}
+
+	function close() {
+		input.blur();
+		container.visible = false;
+		mode = null;
+		deleteTarget = null;
+	}
+
+	function isOpen(): boolean {
+		return mode !== null;
+	}
+
+	function cancel() {
+		if (!mode) return;
+		const finishedMode = mode;
+		close();
+		callbacks.onCancel(finishedMode);
+	}
+
+	input.on(InputRenderableEvents.ENTER, () => {
+		if (!mode) return;
+		const value = input.value.trim();
+
+		if (mode === "delete" && value !== deleteTarget) {
+			hintText.content = "Name doesn't match — try again, or Esc to cancel";
+			hintText.fg = PALETTE.bad;
+			input.value = "";
+			return;
+		}
+
+		const finishedMode = mode;
+		close();
+		callbacks.onSubmit(finishedMode, value);
+	});
+
+	return { container, open, close, isOpen, cancel };
 }

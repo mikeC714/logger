@@ -1,12 +1,12 @@
 import { test, expect, describe, afterEach } from "bun:test";
-import { Folder } from "../folder.ts";
+import { Log } from "../folder.ts";
 import fs from "node:fs/promises";
 
 describe("Folder", () => {
 	console.log(process.env.REMOVE);
 	console.log(process.env.RENAME);
 
-	const folder = new Folder();
+	const folder = new Log();
 	const data = "TEST_FOLDER_LOGGER";
 
   afterEach(async () => {

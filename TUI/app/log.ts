@@ -2,9 +2,13 @@ import { logDir } from "../config/app.config.ts";
 import fs from "node:fs/promises";
 import { join } from "node:path";
 
-export class Folder {
+export const LOG_COLUMNS = ["id", "msg", "metaData", "timestamp"] as const;
+export type LogColumn = (typeof LOG_COLUMNS)[number];
+
+export class Log {
 	protected dirPath = logDir;
 	protected PathMap:Map<string, string> = new Map();
+	private MAX_PREVIEW_ENTRIES:number = 40;
 
 	public data = ():ReadonlyMap<string, string> => {
 		return this.PathMap; 
@@ -12,6 +16,7 @@ export class Folder {
 
 	get = async(name:string) => {
 		if(this.PathMap.has(name)) return this.PathMap.get(name);
+		this.MAX_PREVIEW_ENTRIES
 		return;
 	};
 
@@ -102,4 +107,30 @@ export class Folder {
 		}
 	}
 };
-
+	// readRecent = async (name: string, limit: number = MAX_PREVIEW_ENTRIES): Promise<LogEntry[]> => {
+	// 	const livePath = this.PathMap.get(name);
+	// 	if (!livePath) return [];
+	//
+	// 	let content: string;
+	// 	try {
+	// 		content = await fs.readFile(livePath, "utf8");
+	// 	} catch {
+	// 		return [];
+	// 	}
+	// 	if (content.trim().length === 0) return [];
+	//
+	// 	let rows = parseCsv(content);
+	// 	if (rows.length === 0) return [];
+	//
+	// 	const first = rows[0];
+	// 	if (first && first.length === LOG_COLUMNS.length && first.every((v, i) => v === LOG_COLUMNS[i])) {
+	// 		rows = rows.slice(1);
+	// 	}
+	//
+	// 	return rows.slice(-limit).map((row) => ({
+	// 		id: row[0] ?? "",
+	// 		msg: row[1] ?? "",
+	// 		metaData: row[2] ?? "",
+	// 		timestamp: row[3] ?? "",
+	// 	}));
+	// };

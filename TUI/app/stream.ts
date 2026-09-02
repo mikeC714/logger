@@ -1,7 +1,7 @@
-import { Folder } from "./folder.ts";
+import { Log } from "./folder.ts";
 import type { MSG_DATA, MSG } from "../types/msgData.d.ts"; 
 
-export class Stream extends Folder{
+export class Stream extends Log{
 	private decode = new TextDecoder("utf-8");
 	private ROTATE_THRESHOLD:number = 100_000; 
 	private ENTRY_COUNTS:Map<string, number> = new Map();  

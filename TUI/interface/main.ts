@@ -1,39 +1,35 @@
-import { createCliRenderer } from "@opentui/core";	
+import { createCliRenderer } from "@opentui/core";
 import { CONFIG } from "./config.ts";
 import { HomePage } from "./pages/home.ts";
-import { Folder } from "../app/folder.ts";
-import { Input } from "./comps/home/input.ts";
- 
+import { Log } from "../app/log.ts";
 
-type TYPE = "" | "create" | "delete" | "search"; 
-
-export async function buildTUI(destroy:boolean | null = null){ 
+export async function buildTUI(destroy: boolean | null = null) {
 	const main = await createCliRenderer({ ...CONFIG });
-	if(destroy === true){
+	if (destroy === true) {
 		main.destroy();
 		return;
-	};
+	}
 
-	const folder = new Folder();
-	const { Home, setErr, setWarn } = HomePage(main, folder.data());
+	const log = new Log();
+	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch } = HomePage(main, log);
 
-	let type:TYPE = "";
-	main.keyInput.on("keypress", (key:any) => {
-		switch(key){
-			case(key.ctrl && "n"):
-				type = "create";
-			break;
-			case(key.crtl && "d"):
-				type = "delete";
-			break;
-			case(key.ctrl && "/"):
-				type = "search";
-			break;
+	main.keyInput.on("keypress", (key: any) => {
+		if (isOverlayOpen()) {
+			if (key.name === "escape") cancelOverlay();
+			return; 
 		}
-	})
 
-	const input = Input(type, main);
+		switch (key.name) {
+			case "n":
+				openCreate();
+				break;
+			case "d":
+				openDelete();
+				break;
+			case "/":
+				openSearch();
+				break;
+		}
+	});
 	main.root.add(Home);
-	main.root.add(input)
-	main.root.add
-};
+}
