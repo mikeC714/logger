@@ -1,4 +1,4 @@
-import { Log } from "./folder.ts";
+import { Log } from "./log.ts";
 import type { MSG_DATA, MSG } from "../types/msgData.d.ts"; 
 
 export class Stream extends Log{

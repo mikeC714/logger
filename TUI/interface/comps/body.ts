@@ -1,13 +1,34 @@
 import { BoxRenderable, ScrollBoxRenderable, TextTableRenderable, fg } from "@opentui/core";
-import { PALETTE } from "../../palette.ts";
-import { LOG_COLUMNS, type LogEntry } from "../../../app/log.ts";
+import { PALETTE } from "../palette.ts";
+import { LOG_COLUMNS } from "../../app/log.ts";
+import type { LOG_ENTRY } from "../../types/log.d.ts"
+import type { META_BODY } from "../../types/meta.d.ts";
 
 function headerRow() {
 	return LOG_COLUMNS.map((col:any) => [fg(PALETTE.text)(col)]);
+};
+
+function formatMetaData(meta: META_BODY): string {
+	const parts = [
+		meta.role && `role=${meta.role}`,
+		meta.userId && `user=${meta.userId}`,
+		meta.username && `user=${meta.username}`,
+		meta.timeStamp && `user=${meta.timeStamp}`,
+		meta.version && `user=${meta.version}`,
+		meta.enviroment && `env=${meta.enviroment}`,
+		meta.errorStatus && `user=${meta.errorStatus}`,
+		meta.errorCode && `err=${meta.errorCode}`,
+	].filter(Boolean);
+	return parts.length > 0 ? parts.join(" ") : "-";
 }
 
-function dataRow(entry: LogEntry) {
-	return [entry.id, entry.msg, entry.metaData, entry.timestamp].map((v) => [fg(PALETTE.text)(v)]);
+function dataRow(entry: LOG_ENTRY) {
+	return [
+		String(entry.id),
+		entry.msg,
+		formatMetaData(entry.metaData),
+		entry.timestamp.toISOString(),
+	].map((v) => [fg(PALETTE.text)(v)]);
 }
 
 export function Body(main: any) {
@@ -46,7 +67,7 @@ export function Body(main: any) {
 	scrollBox.content.add(table);
 	container.add(scrollBox);
 
-	function showLog(name: string, entries: LogEntry[]) {
+	function showLog(name: string, entries: Array<LOG_ENTRY>) {
 		container.title = `${name}: recent entries (${entries.length})`;
 		table.content = [headerRow(), ...entries.map(dataRow)];
 		scrollBox.scrollTop = 0;

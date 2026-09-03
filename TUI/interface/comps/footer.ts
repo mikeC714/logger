@@ -1,7 +1,7 @@
 
 import { BoxRenderable, TextRenderable } from "@opentui/core";
-import { Count } from "../../utils/count.ts";
-import { PALETTE } from "../../palette.ts";
+import { Count } from "../utils/count.ts";
+import { PALETTE } from "../palette.ts";
 
 class ErrCount extends Count {
 	constructor() {
@@ -36,13 +36,11 @@ export function Footer(main: any) {
 		paddingRight: 1,
 	});
 
-	// was hardcoded "[c] create ..." — the agreed shortcut is [n], and this
-	// now swaps per active mode via setMode() instead of being static.
 	const hintLabel = new TextRenderable(main, { id: "footerHint", content: HINTS.normal, fg: PALETTE.text });
 	container.add(hintLabel);
 
-	const errorCounter = new TextRenderable(main, { id: "errorCount", content: "0 errors", fg: PALETTE.bad });
-	const warnCounter = new TextRenderable(main, { id: "warnCount", content: "0 warnings", fg: PALETTE.warn });
+	const errorCounter = new TextRenderable(main, { id: "errorCount", content: "0 errors", fg: PALETTE.msgColor.fatal });
+	const warnCounter = new TextRenderable(main, { id: "warnCount", content: "0 warnings", fg: PALETTE.msgColor.warn });
 	const countBox = new BoxRenderable(main, { flexDirection: "row", gap: 2 });
 
 	countBox.add(errorCounter);

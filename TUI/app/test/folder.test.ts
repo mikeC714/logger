@@ -1,36 +1,36 @@
 import { test, expect, describe, afterEach } from "bun:test";
-import { Log } from "../folder.ts";
+import { Log } from "../log.ts";
 import fs from "node:fs/promises";
 
 describe("Folder", () => {
 	console.log(process.env.REMOVE);
 	console.log(process.env.RENAME);
 
-	const folder = new Log();
+	const log = new Log();
 	const data = "TEST_FOLDER_LOGGER";
 
   afterEach(async () => {
 	await fs.rm(process.env.REMOVE as string, { recursive:true, force:true });
   });
 
-  test("CREATE folder", async () => {
-    await folder.create(data);
-    const value = await folder.get(data);
-    const value2 = await folder.get(data);
+  test("CREATE log", async () => {
+    await log.create(data);
+    const value = await log.get(data);
+    const value2 = await log.get(data);
 
     expect(value).toBeDefined();
 	expect(value2).toBeDefined();
   });
 
- test("RENAME folder", async() => {
-	const newName = "Logger_folder_test"
-	const values = await folder.rename(newName, data);
+ test("RENAME log", async() => {
+	const newName = "Logger_log_test"
+	const values = await log.rename(newName, data);
 	expect(values?.new).toBe(process.env.RENAME as string);
 	expect(values?.old).toBe(undefined);
  });
 
- test("DELETE folder", async() => {
-	 const value = await folder.delete(data).catch(() => {});
+ test("DELETE log", async() => {
+	 const value = await log.delete(data).catch(() => {});
 	 expect(value).toBe(`Log: ${data} doesn't exist.`);
  });
 });

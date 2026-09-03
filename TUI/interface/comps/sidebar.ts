@@ -1,7 +1,7 @@
 import { BoxRenderable, SelectRenderable, SelectRenderableEvents } from "@opentui/core";
-import { PALETTE } from "../../palette.ts";
+import { PALETTE } from "../palette.ts";
 
-export function SideBar(main: any, initialNames: string[], onHoverChange: (name: string | null) => void) {
+export function SideBar(main: any, initialNames: Array<string>, onHoverChange: (name: string | null) => void) {
 	const container = new BoxRenderable(main, {
 		id: "sideBar",
 		width: "30%",
@@ -44,7 +44,7 @@ export function SideBar(main: any, initialNames: string[], onHoverChange: (name:
 
 	container.add(select);
 
-	function setNames(names: string[], total: number) {
+	function setNames(names:Array<string>, total: number) {
 		visibleNames = names;
 		select.options = names.map((name) => ({ name, description: "", value: name }));
 		container.title = `logs ${names.length}/${total}`;

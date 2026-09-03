@@ -19,7 +19,7 @@ const LEVELS = {
 
 
 type MSG = {
-	type:typeof LEVELS;
+	lvl:typeof LEVELS;
 	msg:string;
 	meta:typeof META_BODY;
 };

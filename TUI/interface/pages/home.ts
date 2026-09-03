@@ -1,12 +1,12 @@
 import { BoxRenderable } from "@opentui/core";
-import { SideBar } from "../comps/home/sidebar.ts";
-import { Body } from "../comps/home/body.ts";
-import { Footer } from "../comps/home/footer.ts";
-import { Overlay, type OverlayMode } from "../comps/home/input.ts";
+import { SideBar } from "../comps/sidebar.ts";
+import { Body } from "../comps/body.ts";
+import { Footer } from "../comps/footer.ts";
+import { Overlay } from "../comps/input.ts";
 import { Methods } from "../methods.ts";
 import type { Log } from "../../app/log.ts";
 
-export function HomePage(main: any, log: Log) {
+export function HomePage(main:any, log:Log) {
 	const methods = new Methods(log);
 	let currentQuery = "";
 
@@ -14,7 +14,7 @@ export function HomePage(main: any, log: Log) {
 	const body = Body(main);
 	const { footer, setErrCount, setWarnCount, setMode: setFooterMode } = Footer(main);
 
-	const overlay = Overlay(main, {
+	const input = Overlay(main, {
 		onSubmit: (mode, value) => handleOverlaySubmit(mode, value),
 		onCancel: () => handleOverlayCancel(),
 	});
@@ -29,8 +29,8 @@ export function HomePage(main: any, log: Log) {
 		});
 	}
 
-	function refreshSidebar() {
-		const visible = log.filter(currentQuery);
+	async function refreshSidebar() {
+		const visible = await log.filter(currentQuery);
 		sideBar.setNames(visible, log.list().length);
 		if (visible.length === 0) body.showEmpty();
 	}
@@ -44,46 +44,43 @@ export function HomePage(main: any, log: Log) {
 		returnToNormal();
 	}
 
-	function handleOverlaySubmit(mode: OverlayMode, value: string) {
+	function handleOverlaySubmit(mode:any, value: string) {
 		switch (mode) {
 			case "create":
-				void methods.create(value).then(() => {
+				methods.create(value).then(() => {
 					refreshSidebar();
 					returnToNormal();
 				});
-				break;
-
-			case "delete": {
+			break;
+			case "delete": 
 				const indexBeforeDelete = sideBar.getSelectedIndex();
-				void methods.delete(value).then(() => {
+				 methods.delete(value).then(() => {
 					refreshSidebar();
 					sideBar.selectIndexClamped(indexBeforeDelete);
 					returnToNormal();
 				});
-				break;
-			}
-
+			break;
 			case "search":
 				currentQuery = value;
 				refreshSidebar();
 				returnToNormal();
-				break;
+			break;
 		}
 	}
 
 	function openCreate() {
 		setFooterMode("create");
-		overlay.open("create");
+		input.open("create");
 	}
 	function openDelete() {
 		const target = sideBar.getHovered();
-		if (!target) return; // nothing to delete
+		if (!target) return; 
 		setFooterMode("delete");
-		overlay.open("delete", target);
+		input.open("delete", target);
 	}
 	function openSearch() {
 		setFooterMode("search");
-		overlay.open("search");
+		input.open("search");
 	}
 
 	const mainContent = new BoxRenderable(main, {
@@ -106,14 +103,14 @@ export function HomePage(main: any, log: Log) {
 	});
 	container.add(mainContent);
 	container.add(footerContent);
-	container.add(overlay.container);
+	container.add(input.container);
 
 	return {
 		Home: container,
 		setErr: setErrCount,
 		setWarn: setWarnCount,
-		isOverlayOpen: overlay.isOpen,
-		cancelOverlay: overlay.cancel,
+		isOverlayOpen: input.isOpen,
+		cancelOverlay: input.cancel,
 		openCreate,
 		openDelete,
 		openSearch,

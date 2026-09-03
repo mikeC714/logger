@@ -23,8 +23,8 @@ export class Methods {
 		}
 	}
 
-	filter(value: string): string[] {
-		return this.log.filter(value);
+	async filter(value:string):Promise<Array<string>> {
+		return await this.log.filter(value);
 	}
 }
 

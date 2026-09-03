@@ -1,5 +1,5 @@
 import { BoxRenderable, TextRenderable, InputRenderable, InputRenderableEvents } from "@opentui/core";
-import { PALETTE } from "../../palette.ts";
+import { PALETTE } from "../palette.ts";
 
 export type OverlayMode = "create" | "delete" | "search";
 
@@ -51,17 +51,14 @@ export function Overlay(main: any, callbacks: OverlayCallbacks) {
 		switch (nextMode) {
 			case "create":
 				container.title = "Create log";
-				promptText.content = "New logName:";
 				input.placeholder = "logName";
 				break;
 			case "delete":
 				container.title = "Delete log";
-				promptText.content = `Type "${deleteTarget}" to confirm deletion:`;
 				input.placeholder = deleteTarget ?? "";
 				break;
 			case "search":
 				container.title = "Search logs";
-				promptText.content = "Filter logNames:";
 				input.placeholder = "search text";
 				break;
 		}
@@ -94,7 +91,7 @@ export function Overlay(main: any, callbacks: OverlayCallbacks) {
 
 		if (mode === "delete" && value !== deleteTarget) {
 			hintText.content = "Name doesn't match — try again, or Esc to cancel";
-			hintText.fg = PALETTE.bad;
+			hintText.fg = PALETTE.msgColor.fatal;
 			input.value = "";
 			return;
 		}
