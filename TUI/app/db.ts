@@ -3,15 +3,15 @@ import { Database } from "bun:sqlite";
 export class DB{
 	constructor(private db:Database){}
 
-	store = (key:string, path:string) => {
+	storePath = (key:string, path:string) => {
 		this.db.run("INSERT OR REPLACE INTO paths (key,path) VALUES (?,?)", [key, path]);
 	}
 	
-	getAll = ():Array<{key:string, path:string}> => {
+	getAllPaths = ():Array<{key:string, path:string}> => {
 		return this.db.query("SELECT key, path FROM paths").all() as Array<{ key:string, path:string }>;
 	}
 
-	delete = (key:string) => {
+	deletePath = (key:string) => {
 		this.db.run("DELETE FROM paths WHERE key = ?", [key]);
 	}
 

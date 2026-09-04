@@ -16,7 +16,7 @@ export class Log {
 
 	init = async() => {
 		try{
-			const rows = this.db.getAll();
+			const rows = this.db.getAllPaths();
 			for(const row of rows){
 				this.PathMap.set(row.key, row.path);
 			}
@@ -27,7 +27,7 @@ export class Log {
 
 	private store = async(key:string, path:string) => {
 		this.PathMap.set(key,path);
-		this.db.store(key,path);
+		this.db.storePath(key,path);
 	}
 
 	list = ():Array<string> => {
@@ -95,7 +95,7 @@ export class Log {
 			const path:string | undefined = await this.get(name);
 			if(path !== undefined){
 				await rm(path);
-				this.db.delete(name);
+				this.db.deletePath(name);
 				this.PathMap.delete(name);
 				return `Log: ${name} successfully deleted.`;
 			};

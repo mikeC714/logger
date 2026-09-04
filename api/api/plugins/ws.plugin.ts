@@ -17,6 +17,7 @@ function ws_plugin(fastify:any, opts:{}){
 
 	io.use((socket, next) => {
 		const { key } = socket.handshake.auth;
+		console.log("SOCKET KEY", key);
 		if(key !== process.env.SOCKET_KEY){
 			fastify.log.info(`Undisclosed socket attempted to connect. SOCKET:${socket}, TIME: ${Date.now()}`);
 			socket.disconnect(true);
@@ -32,8 +33,8 @@ function ws_plugin(fastify:any, opts:{}){
 		}
 		const { projectKey } = socket.handshake.auth;
 		socket.join(projectKey);
-		socket.on("disconnect", async() => {
-			connectionStatus = false;
+		socket.on("disconnect", async(reason):Promise<void> => {
+			console.log(reason);
 			await WsHandlers.handleDisconnect(fastify.redis, projectKey)
 		});
 		io.emit("connected", connectionStatus)

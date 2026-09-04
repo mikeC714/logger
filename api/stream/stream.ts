@@ -5,26 +5,20 @@ import { AppError } from "../api/errors/app.err.ts";
 
 
 export class Stream{
-	private batch_limit:number = 20;
 	private log_limit:number = 100_000;
-	projectKey?:string | undefined;
 	socketMethods?:any = null;
 	socket?:any;
 	redis?:Redis | any;
-	archive?:any;
 	constructor(options:STREAM_OPTIONS = {}){
-		this.projectKey = options.projectKey;
 		this.redis = options.redis;
 		this.socket = options.socket;
 		this.socketMethods = options.socketMethods;
-		this.archive = options.archive
 	}
 
 	public createGroup = async(projectKey:string):Promise<boolean | string | unknown> => {
 		try{
 			const grp:unknown = await this.redis.xgroup(
-				"CREATE",
-				projectKey,
+				"CREATE", projectKey,
 				`${projectKey}-grp`,
 				"$",
 				"MKSTREAM"
@@ -37,10 +31,7 @@ export class Stream{
 	};
 
 	public writeToStream = async(projectKey:string, batch:Array<object>) => {
-		if(batch.length < this.batch_limit) return "Limit has not been reached.";// TEST.. DONT CRASH ON PRODUCTION JUST LOG TO LOGGER TO NOTFY ON ERROR HICCUP MAY BE OCCURING CAUSING A DATA LOSS
 		try{
-			await this.archive.checkStreamLength(projectKey);
-
 			// chunk = {lvl:string, msg:string, meta:{}} 
 			const chunkArr = batch.map(async chunk => {
 			const payload = typeof chunk === "object" ? JSON.stringify(chunk) : chunk;

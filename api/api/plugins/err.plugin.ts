@@ -17,7 +17,7 @@ export async function err_plugin(fastify:any, opts:{}){
 		// 	req.log.error({ err });
 		// }else 
 		req.log.error({ err });		
-		return rep.status(500).send({ error: "Internal Server Error", wtf: err});
+		return rep.status(500).send({ error: "Internal Server Error", wtf: err.message});
 	})
 }
 export const ERR_PLUGIN = fp(err_plugin); 
