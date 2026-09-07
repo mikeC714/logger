@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { build } from "./app.ts";
 
-const server = build();
+const server = await build();
 server.listen({ port: Number(process.env.PORT) }, (err, address) => {
 	if(err){
 		server.log.error(err);

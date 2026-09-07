@@ -1,8 +1,8 @@
 import {describe, before, after, test} from "node:test";
 import request from "supertest";
 import assert from "node:assert";
-import { build } from ".././../../app.ts";
-import { log, buildSocket } from "../mocks.ts";
+import { build } from "../../app.ts";
+import { log, buildSocket } from "./mocks.ts";
 
 /**
  *  TEST WILL INCLUDE: 

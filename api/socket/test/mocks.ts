@@ -26,10 +26,10 @@ const log = [
 	]
 ]; 
 
-const buildSocket = (override?:any, fn?:any) => {
+const buildSocket = (url:any, override?:any, fn?:any) => {
 	const projectKey = "TESTING_LOG_STREAM";
 	return new Promise((res, rej) => {
-		const socket = io(process.env.SERVER,{
+		const socket = io(url,{
 			auth:{
 				projectKey,
 				...override,
@@ -45,29 +45,29 @@ const buildSocket = (override?:any, fn?:any) => {
 
 		socket.on("connect", () =>{ 
 			clearTimeout(timeout);
-			console.log("Connected", socket.id);
 		})
 
 		socket.on("connected", (ok:boolean) => {
-			console.log("CONNECTION STATUS", ok);
-			if(ok){
-				socket.emit("join_room", projectKey, (ack:{ok:boolean}) => {
-					if(ack.ok){
-						console.log("JOINED ROOM", projectKey)
-						res(socket);
-					};
-				})
-			}
+			if(!ok) return;
+
+			socket.emit("join_room", projectKey, (ack:{ok:boolean, key:string}) => {
+				if(ack.ok){
+					console.log("ROOM CREATED:", ack.ok, ack.key); 
+					res(socket);
+				}else{
+					rej(new Error("Failed to join the project room"));	
+				};
+			});
 		})
+
+		socket.on("msg", (data) => {
+			console.log("MSGDATA",data)
+		});
 
 		socket.on("connection_error", (err) => {
 			clearTimeout(timeout);
 			rej(new Error(`Failed to connect: ${err}`));
 		});
-
-		socket.onAny((event, ...args) => {
-			console.log("[ON_ANY]",event, args);
-		})
 	});
 };
 

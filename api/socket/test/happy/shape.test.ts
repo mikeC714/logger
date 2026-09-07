@@ -24,34 +24,41 @@ import { log, buildSocket } from "../mocks.ts";
  */
 
 
-const app:any = await build()
-await app.ready();
-const req = request(app.server);
 
 let socket:any;
+let app:any;
+let req:any;
+
 before(async() => {
-	socket = await buildSocket();
+	app = await build()
+	try{
+		await app.listen({ port:3000, host:"127.0.0.1"})
+		await app.ready();
+		const url = `http://localhost:${app.server.address().port}`
+		req = request(url);
+		socket = await buildSocket(url);
+	}catch(e){
+		throw e;
+	}
 })
+
 after(async() => {
-	socket.close()
+	await new Promise<void>((res) => {
+		socket.once("disconnect", () => res());
+		socket.close();
+	})
 	await app.close();
 });
-test("Send log to client socket", { timeout: 10000, } ,async() => {
-	const msg = new Promise((res, rej) => socket.once("msg", (data:any) => res(data)));
 
+test("Send log to client socket", { timeout: 10000, } ,async() => {
 	const res = await req	
 					.post("/api/log")
 					.set("Content-type", "application/json")
 					.send(log);	 
 
-	console.log(res.status)
-	assert.strictEqual(res.status, 201);
-
-	const msgData = await msg;
-	console.log("MSG", msgData);
+	assert.strictEqual(res.status, 201)
+	assert.strictEqual(res.ok, true);
 })
-
-
 
 
 

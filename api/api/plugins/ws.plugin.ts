@@ -15,7 +15,6 @@ function ws_plugin(fastify:any, opts:{}){
 	
 	io.use((socket, next) => {
 		const { projectKey, key } = socket.handshake.auth;
-		console.log("SOCKET KEY", key);
 		if(key !== process.env.SOCKET_KEY || !projectKey){
 			fastify.log.warn(`Undisclosed socket attempted to connect. SOCKET:${socket}, TIME: ${Date.now()}`);
 			socket.disconnect(true);
@@ -34,23 +33,23 @@ function ws_plugin(fastify:any, opts:{}){
 		fastify.log.info(`Socket: ${socket.id} connected to project: ${key}`);
 
 		socket.emit("connected", true);
-
 		socket.on("join_room", async(pKey:string, fn:(ack:{ ok:boolean, key:string })=>void) => {
-			try{
-				console.log("JSON JOIN",JSON.stringify(pKey))
-				console.log("JSON JOIN",JSON.stringify(projectKey))
 
-				await socket.join(JSON.stringify(projectKey));
+			try{
+				await socket.join(pKey);
+
 				fastify.log.info(`Socket:${socket.id} joined room: ${pKey}`);
-				fn({ ok:true, key:projectKey });
+
+				fn({ ok:true, key:pKey });
 			}catch(e:any){
 				fastify.log.error(`Join failed for:${socket.id}, ${e}`);
 				fn({ ok:false, key:projectKey });
 			}	
 		})
+
 		socket.on("disconnect", async(reason:any):Promise<void> => {
 			fastify.log.info(`Socket:${socket.id} disconnected:${reason}`);
-			await WsHandlers.handleDisconnect(projectKey)
+			socket.leave(projectKey);
 		})
 	});
 

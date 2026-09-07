@@ -6,5 +6,6 @@ import { SocketService } from "../../socket/ws.service.ts";
 export async function logRoutes(fastify:FastifyInstance){
 	const socketService = new SocketService(fastify.io);
 	const logController = new Log(socketService);
+
 	fastify.post("/log", { schema:LOG_SCHEMA } ,logController.log);
 }

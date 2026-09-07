@@ -8,10 +8,19 @@ export class SocketService{
 	constructor(socket:Server){
 		this.socket = socket;
 	}
-	public writeToClient = async(body:JSON<[projectKey:string, logs:Array<MSG_DATA>]>):Promise<void> => {
-		console.log("SENDING TO ROOM:",body[0], body[1])
-		const [projectKey] = body;
-		console.log(this.socket)
-		this.socket.to(projectKey as string).emit("msg", body)	
+
+	public writeToClient = async(body:JSON<[projectKey:string, logs:Array<MSG_DATA>]>):Promise<any> => {
+		const [projectKey, logs] = body;
+		if(!projectKey){
+			console.error("Failed to provide projectKey. Cannot send to room without projectKey");
+		}; 
+		try{
+			this.socket.to(projectKey as string).emit("msg", body);
+		}catch(e){
+			console.error("Failed to emit to room", projectKey, e)
+		};
 	}
 }
+
+
+

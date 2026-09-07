@@ -6,11 +6,10 @@ import { SOCKET_PLUGIN } from "./api/plugins/ws.plugin.ts";
 // import { healthRoutes } from "./api/module/health/health.routes.ts";
 import { logRoutes } from "./api/module/log.routes.ts"
 
-export function build(opts={}){
+export async function build(opts={}){
 	const app = fastify({ logger:true, ...opts });
 	app.register(ERR_PLUGIN);
-	app.register(SOCKET_PLUGIN);
-	app.register(REDIS_PLUGIN, { timeout: 6000 });
-	app.register(logRoutes, { prefix: "/api" });
+	await app.register(SOCKET_PLUGIN);
+	await app.register(logRoutes, { prefix: "/api" });
 	return app;
 }
