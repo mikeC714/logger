@@ -33,17 +33,22 @@ before(async() => {
 	socket = await buildSocket();
 })
 after(async() => {
-	socket.emit("disconnect", () => "Finished Test");
 	socket.close()
 	await app.close();
 });
-test("Send log to client socket", async() => {
+test("Send log to client socket", { timeout: 10000, } ,async() => {
+	const msg = new Promise((res, rej) => socket.once("msg", (data:any) => res(data)));
+
 	const res = await req	
 					.post("/api/log")
 					.set("Content-type", "application/json")
 					.send(log);	 
-	console.log(req)
-	console.log(res);
+
+	console.log(res.status)
+	assert.strictEqual(res.status, 201);
+
+	const msgData = await msg;
+	console.log("MSG", msgData);
 })
 
 

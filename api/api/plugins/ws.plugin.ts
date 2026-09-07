@@ -1,6 +1,6 @@
 import fp from "fastify-plugin";
 import { Server } from "socket.io";
-import { WsHandlers } from "../../stream/ws/ws.handlers.ts";
+import { WsHandlers } from "../../socket/ws.handlers.ts";
 
 function ws_plugin(fastify:any, opts:{}){
 	const io = new Server(fastify.server, {
@@ -13,13 +13,11 @@ function ws_plugin(fastify:any, opts:{}){
 
 	fastify.decorate("io",io);
 	
-	let connectionStatus:boolean = false;
-
 	io.use((socket, next) => {
-		const { key } = socket.handshake.auth;
+		const { projectKey, key } = socket.handshake.auth;
 		console.log("SOCKET KEY", key);
-		if(key !== process.env.SOCKET_KEY){
-			fastify.log.info(`Undisclosed socket attempted to connect. SOCKET:${socket}, TIME: ${Date.now()}`);
+		if(key !== process.env.SOCKET_KEY || !projectKey){
+			fastify.log.warn(`Undisclosed socket attempted to connect. SOCKET:${socket}, TIME: ${Date.now()}`);
 			socket.disconnect(true);
 			return;
 		};
@@ -27,18 +25,35 @@ function ws_plugin(fastify:any, opts:{}){
 	});
 
 	io.on("connect", (socket) => {
-		connectionStatus = true;
-		if(socket.recovered){
-			fastify.log.info(`Socket:${socket} had a connection blip.`);
-		}
-		const { projectKey } = socket.handshake.auth;
-		socket.join(projectKey);
-		socket.on("disconnect", async(reason):Promise<void> => {
-			console.log(reason);
-			await WsHandlers.handleDisconnect(fastify.redis, projectKey)
-		});
-		io.emit("connected", connectionStatus)
+		const { projectKey, key } = socket.handshake.auth;
+		if(!key){
+			socket.disconnect(true);
+			return;
+		};
+	
+		fastify.log.info(`Socket: ${socket.id} connected to project: ${key}`);
+
+		socket.emit("connected", true);
+
+		socket.on("join_room", async(pKey:string, fn:(ack:{ ok:boolean, key:string })=>void) => {
+			try{
+				console.log("JSON JOIN",JSON.stringify(pKey))
+				console.log("JSON JOIN",JSON.stringify(projectKey))
+
+				await socket.join(JSON.stringify(projectKey));
+				fastify.log.info(`Socket:${socket.id} joined room: ${pKey}`);
+				fn({ ok:true, key:projectKey });
+			}catch(e:any){
+				fastify.log.error(`Join failed for:${socket.id}, ${e}`);
+				fn({ ok:false, key:projectKey });
+			}	
+		})
+		socket.on("disconnect", async(reason:any):Promise<void> => {
+			fastify.log.info(`Socket:${socket.id} disconnected:${reason}`);
+			await WsHandlers.handleDisconnect(projectKey)
+		})
 	});
+
 
 	io.on("connection_error", (err) => {
 		if(err){
@@ -48,7 +63,7 @@ function ws_plugin(fastify:any, opts:{}){
 		// return err 
 	})
 
-	fastify.addHook('onClose', (done) => {
+	fastify.addHook('onClose', (done:boolean) => {
 		//close client but connect to queue 
 	})
 }

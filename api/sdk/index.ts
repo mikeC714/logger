@@ -48,12 +48,8 @@ export class Logger{
 			}
 		};
 		this.stream = new Stream({ projectKey:this.config.projectKey });
-		this.init();
 	}
 
-	private init = async() => {
-		await this.stream.createGroup(this.config.projectKey);	
-	};
 
 	public log = async(options:Record<string, string | object> = { lvl:"info", msg:"", meta:META_BODY }) => {
 		// validate the shape of the parameters
@@ -97,7 +93,7 @@ export class Logger{
 				headers:{
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify([this.config.projectKey, this.batch])
+				body: JSON.stringify({key:this.config.projectKey, logs:this.batch})
 			}).then(res => res.json());	
 
 			if(res.ok !== true){

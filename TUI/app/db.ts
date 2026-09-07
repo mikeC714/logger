@@ -13,6 +13,5 @@ export class DB{
 
 	deletePath = (key:string) => {
 		this.db.run("DELETE FROM paths WHERE key = ?", [key]);
-	}
-
+	};
 }

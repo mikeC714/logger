@@ -26,12 +26,13 @@ const log = [
 	]
 ]; 
 
-const buildSocket = (override?:any) => {
+const buildSocket = (override?:any, fn?:any) => {
+	const projectKey = "TESTING_LOG_STREAM";
 	return new Promise((res, rej) => {
 		const socket = io(process.env.SERVER,{
 			auth:{
+				projectKey,
 				...override,
-				projectKey:"TESTING_LOG_STREAM",
 				key:process.env.SOCKET_KEY	
 			},
 			reconnection:true,
@@ -42,20 +43,31 @@ const buildSocket = (override?:any) => {
 			rej(new Error("Socket Connection Failed"));
 		}, 5000);
 
-		socket.on("connect", () => {
+		socket.on("connect", () =>{ 
 			clearTimeout(timeout);
-			res(socket);
-		});
+			console.log("Connected", socket.id);
+		})
+
+		socket.on("connected", (ok:boolean) => {
+			console.log("CONNECTION STATUS", ok);
+			if(ok){
+				socket.emit("join_room", projectKey, (ack:{ok:boolean}) => {
+					if(ack.ok){
+						console.log("JOINED ROOM", projectKey)
+						res(socket);
+					};
+				})
+			}
+		})
+
 		socket.on("connection_error", (err) => {
 			clearTimeout(timeout);
 			rej(new Error(`Failed to connect: ${err}`));
 		});
-		socket.on("msg", (fn:(ack:boolean) => boolean) => {
-			fn(true);
-		});
-		socket.on("ackedMsg", (msg) => {
-			console.log("MSG",msg)
-		});
+
+		socket.onAny((event, ...args) => {
+			console.log("[ON_ANY]",event, args);
+		})
 	});
 };
 
