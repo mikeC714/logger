@@ -8,17 +8,17 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "dev": "tsx watch ./server.ts",
-	"test": "node --experimental-strip-types --env-file=.env --test",
-	"test:file": "node --experimental-strip-types --env-file=.env --test",
-	"test:dir": "tsc && node --env-file=.env --test",
-	"test:all": "tsc && node --env-file=.env --test dist/test/"
+    "test": "node --experimental-strip-types --env-file=.env --test",
+    "test:file": "node --experimental-strip-types --env-file=.env --test",
+    "test:dir": "tsc && node --env-file=.env --test",
+    "test:all": "tsc && node --env-file=.env --test dist/test/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.5.0",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.2.1",
     "dotenv": "^17.4.2",

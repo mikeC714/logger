@@ -1,5 +1,3 @@
-import { Stream } from "../stream/stream.ts";
-
 type NOTI = {
 	send:boolean;
 	recipient:string;
@@ -18,7 +16,7 @@ type NOTI = {
 
 let LEVELS:any = ["info","warn","error","fatal","debug",];
 const CONFIG = {
-	projectKey:"" as string,
+	projectKey:"",
 	notifications:{
 		send:false,
 		logTypes:{
@@ -32,7 +30,6 @@ const CONFIG = {
 export class Logger{
 	private server:string = process.env.SERVER as string;
 	private batchLimit:number = 20;
-	private stream:Stream;
 	private batch:Array<object> = []; 
 	private timer:any = null;
 	private timeLimit:number = 5000;
@@ -47,7 +44,6 @@ export class Logger{
 				...config.notifications
 			}
 		};
-		this.stream = new Stream({ projectKey:this.config.projectKey });
 	}
 
 

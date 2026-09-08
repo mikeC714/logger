@@ -1,6 +1,5 @@
 import fp from "fastify-plugin";
 import { Server } from "socket.io";
-import { WsHandlers } from "../../socket/ws.handlers.ts";
 
 function ws_plugin(fastify:any, opts:{}){
 	const io = new Server(fastify.server, {

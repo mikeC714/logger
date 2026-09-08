@@ -25,6 +25,7 @@ export class Log {
 		}
 	}
 
+	
 	private store = async(key:string, path:string) => {
 		this.PathMap.set(key,path);
 		this.db.storePath(key,path);
@@ -42,6 +43,9 @@ export class Log {
 		if(this.PathMap.has(name)) return this.PathMap.get(name);
 		return;
 	};
+
+		
+
 
 	create = async(name:string) => {
 		const HEADERS = [ "ID", "MSG", "DATE" ].join("  ");

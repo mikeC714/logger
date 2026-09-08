@@ -3,13 +3,13 @@ dotenv.config();
 import { build } from "./app.ts";
 
 const server = await build();
-server.listen({ port: Number(process.env.PORT) }, (err, address) => {
-	if(err){
-		server.log.error(err);
-		console.error(`Error:${err}`);
-		process.exit(1);
-	};	
-	console.log(`Server is listening on PORT:${address}`);
-})
+try{
+	await server.listen({ port: Number(process.env.PORT), host:"localhost"})
+}catch(e:any){
+	if(e){
+		server.log.error(`ERROR: ${e}`);
+	}
+	throw new Error(e);
+}
 
 

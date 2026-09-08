@@ -7,7 +7,7 @@ export class Stream extends Log{
 	private ENTRY_COUNTS:Map<string, number> = new Map();  
 
 	constructor(){
-		super();
+		super() 
 	};
 	
 	 public msg = (msgData:MSG_DATA) => {
