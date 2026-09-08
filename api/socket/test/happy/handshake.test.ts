@@ -1,8 +1,7 @@
-import {describe, before, after, test} from "node:test";
-import request from "supertest";
+import {before, after, test} from "node:test";
 import assert from "node:assert";
 import { build } from ".././../../app.ts";
-import { log, buildSocket } from "../mocks.ts";
+import {buildSocket } from "../mocks.ts";
 
 /**
  *  TEST WILL INCLUDE: 
@@ -24,28 +23,36 @@ import { log, buildSocket } from "../mocks.ts";
  */
 
 
-const app:any = await build()
-await app.ready();
-const req = request(app.server);
 
+let app:any;
 let socket:any;
+
 before(async() => {
-	socket = await buildSocket();
+	app = await build()
+	try{
+		await app.listen({ port:3000, host:"localhost" });
+		await app.ready();
+		const url = `http://localhost:${app.server.address().port}`
+		socket = await buildSocket(url);
+	}catch(e){
+		console.error(e)
+		throw e;
+	}
 })
 after(async() => {
-	socket.emit("disconnect", () => "Finished Test");
-	socket.close()
-	await app.close();
+	await new Promise<void>((res) => {
+		socket.emit("disconnect", res());
+		socket.close()
+	});
+	return await app.close();
 });
-test("Send log to client socket", async() => {
-	const res = await req	
-					.post("/api/log")
-					.set("Content-type", "application/json")
-					.send(log);	 
-	console.log(res)
-	assert.strictEqual(res.status, 201);
-})
 
+const expected = "TESTING_LOG_STREAM"
+test("Testing Auth for socket", { timeout:1000 }, () => {
+	const { projectKey, key } = socket.auth;
+	assert.strictEqual(projectKey, expected);
+	assert.strictEqual(key, process.env.SOCKET_KEY)
+})
 
 
 

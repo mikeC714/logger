@@ -32,7 +32,7 @@ let req:any;
 before(async() => {
 	app = await build()
 	try{
-		await app.listen({ port:3000, host:"127.0.0.1"})
+		await app.listen({ port:3000, host:"localhost" });
 		await app.ready();
 		const url = `http://localhost:${app.server.address().port}`
 		req = request(url);
