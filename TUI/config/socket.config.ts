@@ -1,7 +1,6 @@
 import { io } from "socket.io-client";
-import { Stream } from "../app/stream.ts";
-import type { SOCKET_DATA } from "../types/socket.d.ts";
-import type { JSON } from "../types/json.d.ts";
+import { Log } from "../app/log.ts";
+import type { MSG_DATA } from "../types/msgData.d.ts";
 
 const socket = io(process.env.SERVER,{
 	auth:{
@@ -15,9 +14,9 @@ const socket = io(process.env.SERVER,{
 });
 
 
-export function Socket(){
-	const stream = new Stream();
+const log = new Log();
 
+export function Socket(){
 	socket.off("msg")
 	socket.on("connect", () => {
 		console.log("Connected.");
@@ -31,10 +30,7 @@ export function Socket(){
 	socket.on("reconnection_attempt", (attempt) => {
 		console.log(`Reconnecting: ${attempt}`);
 	});
-	socket.on("msg", (fn:(ack:boolean) => boolean) => {
-		fn(true);
-	});
-	socket.on("ackedMsg", (msg:JSON<SOCKET_DATA>) => {
-		stream.msg(JSON.parse(msg));	
+	socket.on("msg", (data:MSG_DATA) => {
+		log.write(data);	
 	});
 }

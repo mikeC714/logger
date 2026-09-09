@@ -19,14 +19,14 @@ const LEVELS = {
 
 
 type MSG = {
-	lvl:typeof LEVELS;
+	lvl:string;
 	msg:string;
 	meta:typeof META_BODY;
 };
-type MSG_DATA = Record<string, {
-	projectKey:string;
-	msg:MSG_DATA;
-}>;
+type MSG_DATA = [ 
+	projectKey:string,
+	logs:Array<MSG>,
+];
 
 
 export { META_BODY, LEVELS, MSG, MSG_DATA };

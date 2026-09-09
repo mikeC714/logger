@@ -1,33 +1,44 @@
 import { Database } from "bun:sqlite";
+import type { MSG } from "../types/msgData.d.ts";
 
 export class DB{
 	private limit:number = 40;
 
 	constructor(private db:Database){}
 
-	create = (key:string, path:string) => {
-		try{
-			this.db.run("INSERT OR REPLACE INTO logs (project_key, ) VALUES (?,?)", [key, path]);
-		}catch(e){
 
+	// CREATING
+	// RECIEVING 
+	// DELETING
+	// ALL KEY RELATED
+
+	create = (key:string) => {
+		try{
+			this.db.run("INSERT INTO bank (project_key) VALUES (?,?)", [key]);
+		}catch(e){
+		
 		}
 	};
-
 	getAllKeys = () => {
 		try{
-			return this.db.query("SELECT key FROM logs").all() as Array<{ key:string, path:string }>;
+			return this.db.query("SELECT key FROM bank").all() as Array<string>;
 		}catch(e){
 			console.error("Failed to get log keys", e);	
 		}
 	};
-
-	deleteLog = (key:string) => {
+	deleteKey = (key:string) => {
 		try{
-			this.db.run("DELETE FROM logs WHERE key = ?", [key]);
+			this.db.run("DELETE FROM bank WHERE key = ?", [key]);
 		}catch(e){
 			console.error("Failed to delete log", e);	
 		}
 	};
+
+
+	// RECIEVING 
+	// DELETING
+	// WRITTING
+	// ALL LOG RELATED
 
 	getPreviewLogs = (key:string) => {
 		try{
@@ -38,7 +49,7 @@ export class DB{
 		}
 	};
 
-	getLog = (key:string) => {
+	getAllLogs = async(key:string) => {
 		try{
 			return this.db.query("SELECT * FROM logs WHERE key = ?").all(key);
 		}catch(e){
@@ -46,7 +57,7 @@ export class DB{
 		}
 	};
 
-	write = (key:string, logs:Array<{lvl:string, msg:string, meta:object}>) => {
+	write = async(key:string, logs:Array<MSG>):Promise<void> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta)");
 		try{
 			this.db.transaction(() => {
@@ -58,11 +69,10 @@ export class DB{
 						$meta:JSON.stringify(log.meta)
 					});
 				}
-			})();
+			});
 		}catch(e){
-			console.error("Failed to write to log data.", e);	
 		}
 	};
-
 };
+
 
