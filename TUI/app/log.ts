@@ -16,7 +16,7 @@ export class Log {
 			if(rows === undefined) return;
 
 			for(const row of rows){
-				this.LogKeys.push(row)
+				this.LogKeys.push(row.project_key);
 			}
 		}catch(e){
 
@@ -60,6 +60,7 @@ export class Log {
 		}
 	};
 	
+	// ALL LOGS FROM KEY
 	getAllLogs = async(name:string) => {
 		try{
 			return await this.db.getAllLogs(name);

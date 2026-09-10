@@ -11,7 +11,6 @@ export class DB{
 	// RECIEVING 
 	// DELETING
 	// ALL KEY RELATED
-	
 	create = (key:string):boolean => {
 		try{
 			this.db.run("INSERT INTO bank (project_key) VALUES (?)", [key]);
@@ -43,7 +42,6 @@ export class DB{
 		}catch(e){
 		}
 	}
-
 
 	// RECIEVING 
 	// DELETING

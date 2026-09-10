@@ -21,7 +21,6 @@ export function initDB(){
 		   created_at INTEGER NOT NULL DEFAULT (unixepoch())
 	   )		
    `);
-
 	   db.run(`
 			  CREATE INDEX idx_logs_level ON logs(level)
 	  `);
