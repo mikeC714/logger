@@ -1,8 +1,8 @@
 import { test, beforeAll, afterAll, expect } from "bun:test";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { createDB } from "./test.utils.ts";
-import { DB } from "../db.ts";
+import { createDB } from "./utils/createDb.ts";
+import { DB } from "../app/db.ts";
 
 // instantiate and insert data within memory db
 // returning all Bank keys within an Array

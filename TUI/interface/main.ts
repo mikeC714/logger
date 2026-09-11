@@ -11,6 +11,7 @@ export async function buildTUI(destroy: boolean | null = null) {
 	}
 
 	const log = new Log();
+	log.init();
 	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch } = HomePage(main, log);
 
 	main.keyInput.on("keypress", (key: any) => {

@@ -1,6 +1,6 @@
 import { beforeAll, afterAll, test, expect } from "bun:test";
-import { createDB } from "./test.utils.ts";
-import { DB } from "../db.ts";
+import { createDB } from "./utils/createDb.ts";
+import { DB } from "../app/db.ts";
 
 // Instantiate a memory based sqlite db;
 // then it should call DB class method create

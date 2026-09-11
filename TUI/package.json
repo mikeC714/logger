@@ -7,12 +7,14 @@
   },
   "private": true,
   "scripts": {
-	"dev":"bun run --watch main.ts",
-	"test": "bun test --env-file=.env"
+    "dev": "bun run --watch main.ts",
+    "test": "bun test --env-file=.env"
   },
   "devDependencies": {
+    "@socket.io/bun-engine": "^0.1.2",
     "@types/bun": "latest",
-    "@types/node": "^26.1.2"
+    "@types/node": "^26.1.2",
+    "socket.io": "^4.8.3"
   },
   "peerDependencies": {
     "typescript": "^5.9.3"

@@ -1,36 +1,6 @@
-import { Database } from "bun:sqlite";
 import type { MSG } from "../../types/msgData.d.ts";
 
-
-export function createDB():Database{
-	try{
-		const db = new Database(":memory", { strict:true, create:true, readwrite:true });
-		db.run("PRAGMA foreign_keys = ON")
-		db.run(`
-			   CREATE TABLE IF NOT EXISTS bank(
-					project_key TEXT PRIMARY KEY,
-					created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-				)`
-			  );
-		db.run(`
-		   CREATE TABLE IF NOT EXISTS logs (
-			   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-			   project_key TEXT,
-			   level TEXT NOT NULL CHECK (level IN ('info', 'warn', 'error', 'fatal', 'debug')),
-			   msg TEXT,
-			   meta TEXT,
-			   created_at INTEGER NOT NULL DEFAULT (unixepoch()),
-			   FOREIGN KEY (project_key) REFERENCES bank(project_key) ON DELETE CASCADE
-		   )`		
-		);
-	  return db;
-	}catch(e){
-		console.error(e);
-		throw e;
-	}
-}
-
-export function getLogs(overrides?:any):any{
+function getLogs(overrides?:any):any{
 	 return {
 		projectKey:"test_key_1",
 		...overrides,
@@ -116,9 +86,9 @@ export function getLogs(overrides?:any):any{
 			{lvl:"fatal", msg:`Payement service failure`, meta:{}},
 			{lvl:"info", msg:`Payment Service is online: ${new Date(Date.now()).toISOString().split("T")[0]}`, meta:{}},
 		]
-	}as const;
+	};
 }
-export const logs:Array<MSG> = [
+const logs:Array<MSG> = [
 		{lvl:"info", msg:`Server is running: ${new Date(Date.now()).toISOString().split("T")[0]}`, meta:{}},
 		{lvl:"warn", msg:`Redis server buffered: ${new Date(Date.now()).toISOString().split("T")[0]}`, meta:{}},
 		{lvl:"fatal", msg:`Server is down`, meta:{}},
@@ -200,3 +170,5 @@ export const logs:Array<MSG> = [
 		{lvl:"fatal", msg:`Payement service failure`, meta:{}},
 		{lvl:"info", msg:`Payment Service is online: ${new Date(Date.now()).toISOString().split("T")[0]}`, meta:{}},
 	]
+
+export { logs, getLogs };

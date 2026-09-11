@@ -31,6 +31,9 @@ export function initDB(){
    db.run(`
 		  CREATE INDEX idx_logs_level ON logs(level)
   `);
+   db.run(`
+		  CREATE INDEX idx_project_key ON logs(project_key)
+  `);
 };
 
 

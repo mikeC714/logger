@@ -10,7 +10,7 @@ export function HomePage(main:any, log:Log) {
 	const methods = new Methods(log);
 	let currentQuery = "";
 
-	const sideBar = SideBar(main, log.list(), (name) => handleHoverChange(name));
+	const sideBar = SideBar(main, log.list(), (projectKey) => handleHoverChange(projectKey));
 	const body = Body(main);
 	const { footer, setErrCount, setWarnCount, setMode: setFooterMode } = Footer(main);
 
@@ -19,15 +19,16 @@ export function HomePage(main:any, log:Log) {
 		onCancel: () => handleOverlayCancel(),
 	});
 
-	function handleHoverChange(name: string | null) {
-		if (!name) {
+	function handleHoverChange(projectKey: string | null) {
+		if (!projectKey) {
 			body.showEmpty();
 			return;
 		}
-		void log.readRecent(name).then((entries:any) => {
-			body.showLog(name, entries);
-		});
-	}
+		log.preview(projectKey)
+			.then((entries:any) => {
+				body.showLog(projectKey, entries);
+			});
+	};
 
 	async function refreshSidebar() {
 		const visible = await log.filter(currentQuery);

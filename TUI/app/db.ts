@@ -47,7 +47,6 @@ export class DB{
 	// DELETING
 	// WRITTING
 	// ALL LOG RELATED
-
 	getPreviewLogs = async(key:string) => {
 		try{
 			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ? ORDER BY rowid DESC LIMIT ?").all(key, this.limit);
@@ -86,6 +85,15 @@ export class DB{
 			queryInsert.finalize();
 		}
 	};
+
+	// ENTRY MONITORING
+	private getEntryCount = async(key:string) => {
+		try{
+			return this.db.query("SELECT COUNT(*) as count FROM logs WHERE project_key = $project_key").get({ $project_key: key }) as { count:number };
+		}catch(e){
+			throw e;
+		}
+	}
 };
 
 
