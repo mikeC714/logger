@@ -2,6 +2,8 @@ import { createCliRenderer } from "@opentui/core";
 import { CONFIG } from "./config.ts";
 import { HomePage } from "./pages/home.ts";
 import { Log } from "../app/log.ts";
+import { DB } from "../app/db.ts";
+import { db } from "../config/db.config.ts";
 
 export async function buildTUI(destroy: boolean | null = null) {
 	const main = await createCliRenderer({ ...CONFIG });
@@ -10,8 +12,10 @@ export async function buildTUI(destroy: boolean | null = null) {
 		return;
 	}
 
-	const log = new Log();
+	const database = new DB(db);
+	const log = new Log(database);
 	log.init();
+
 	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch } = HomePage(main, log);
 
 	main.keyInput.on("keypress", (key: any) => {

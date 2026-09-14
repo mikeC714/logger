@@ -16,7 +16,7 @@ export class DB{
 			this.db.run("INSERT INTO bank (project_key) VALUES (?)", [key]);
 			return true
 		}catch(e){
-			console.error(e);
+			console.log(e);
 			throw e;	
 		}
 	};

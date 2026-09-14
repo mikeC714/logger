@@ -46,6 +46,7 @@ export function SideBar(main: any, initialNames: Array<string>, onHoverChange: (
 
 	function setNames(names:Array<string>, total: number) {
 		visibleNames = names;
+		console.log(visibleNames)
 		select.options = names.map((name) => ({ name, description: "", value: name }));
 		container.title = `logs ${names.length}/${total}`;
 		if (names.length > 0) {

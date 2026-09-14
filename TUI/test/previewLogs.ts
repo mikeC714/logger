@@ -2,7 +2,7 @@ import { test, beforeAll, afterAll, expect, expectTypeOf } from "bun:test";
 import { rmSync } from "node:fs";
 import { join } from "node:path";
 import { createDB, getLogs } from "./test.utils.ts";
-import { DB } from "../db.ts";
+import { DB } from "../app/db.ts";
 
 // instantiate and insert data within memory db
 // call DB method preview log based on the bank key

@@ -6,16 +6,20 @@ import type { MSG_DATA } from "../types/msgData.d.ts";
 export const LOG_COLUMNS = ["id", "msg", "metaData", "timestamp"] as const;
 export class Log {
 	protected LogKeys:Set<string> = new Set();
-	private db = new DB(db);
+
+	constructor(private db:DB){}
 
 	init = async() => {
 		try{
+			console.log("HIT INIT")
 			const rows = this.db.getAllKeys();
+			console.log(rows);
 			if(rows === undefined) return;
 
 			for(const row of rows){
 				this.LogKeys.add(row.project_key);
 			}
+			console.log("FINISHED INIT")
 		}catch(e){
 			console.error("FAILURE. Failed to init log keys");	
 			process.exit(1);
@@ -30,13 +34,13 @@ export class Log {
 			keys.push(key);
 		};
 
+		console.log(keys)
+
 		return keys;
 	};
 
 	filter = async(query:string):Promise<[] | Array<string>> => {
 		let results:Array<string> = [];
-		if(!this.LogKeys.has(query)) return results;
-
 		for(const key of this.LogKeys.values()){
 			if(key.includes(query)){
 				results.push(key);
@@ -52,6 +56,7 @@ export class Log {
 		if(this.LogKeys.has(projectKey)) return; 
 		try{
 			this.db.create(projectKey);
+			this.LogKeys.add(projectKey);
 		}catch(e){
 			console.error("FAILURE. Failed to create log");	
 			process.exit(1);

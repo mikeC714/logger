@@ -3,7 +3,7 @@ import { Database } from "bun:sqlite";
 // NEED TO FIGURE OUT HOW TO DETERMINE THE PATH
 // BEFORE CREATING THE DB INSTANCE:
 // CHECK IF THE PATH DIR WAS INSTANTIATED (existsSync)
-export const db = new Database("", {
+export const db = new Database(":memory", {
 	strict:true,
 	create:true,
 	readwrite:true
@@ -28,9 +28,6 @@ export function initDB(){
 		   FOREIGN KEY (project_key) REFERENCES bank(project_key) ON DELETE CASCADE
 	   )`		
 	);
-   db.run(`
-		  CREATE INDEX idx_logs_level ON logs(level)
-  `);
    db.run(`
 		  CREATE INDEX idx_project_key ON logs(project_key)
   `);
