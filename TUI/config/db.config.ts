@@ -14,7 +14,6 @@ export async function initDB(){
 	db.run(`
 		   CREATE TABLE IF NOT EXISTS bank(
 				project_key TEXT PRIMARY KEY,
-				secret TEXT NOT NULL,
 				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 			)`
 		  );

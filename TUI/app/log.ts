@@ -1,4 +1,3 @@
-import { db } from "../config/db.config.ts";
 import { DB } from "./db.ts";
 import type { MSG_DATA } from "../types/msgData.d.ts";
 
