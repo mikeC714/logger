@@ -3,8 +3,11 @@ import type { MSG } from "../types/msgData.d.ts";
 
 export class DB{
 	private limit:number = 40;
+	private db:Database;
 
-	constructor(private db:Database){}
+	constructor(db:Database){
+		this.db = db;
+	}
 
 
 	// CREATING

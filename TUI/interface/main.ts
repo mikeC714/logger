@@ -2,19 +2,15 @@ import { createCliRenderer } from "@opentui/core";
 import { CONFIG } from "./config.ts";
 import { HomePage } from "./pages/home.ts";
 import { Log } from "../app/log.ts";
-import { DB } from "../app/db.ts";
-import { db } from "../config/db.config.ts";
 
-export async function buildTUI(destroy: boolean | null = null) {
+export async function buildTUI(destroy: boolean | null = null, log:Log | null) {
 	const main = await createCliRenderer({ ...CONFIG });
 	if (destroy === true) {
 		main.destroy();
 		return;
 	}
-
-	const database = new DB(db);
-	const log = new Log(database);
-	log.init();
+	
+	if(log === null) throw new Error("Log parameter is null.");
 
 	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch } = HomePage(main, log);
 

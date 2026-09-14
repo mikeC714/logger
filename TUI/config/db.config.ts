@@ -3,17 +3,18 @@ import { Database } from "bun:sqlite";
 // NEED TO FIGURE OUT HOW TO DETERMINE THE PATH
 // BEFORE CREATING THE DB INSTANCE:
 // CHECK IF THE PATH DIR WAS INSTANTIATED (existsSync)
-export const db = new Database(":memory", {
-	strict:true,
-	create:true,
-	readwrite:true
-});
+export async function initDB(){
+	const db = new Database(":memory:", {
+		strict:true,
+		create:true,
+		readwrite:true
+	});
 
-export function initDB(){
 	db.run("PRAGMA foreign_keys = ON")
 	db.run(`
 		   CREATE TABLE IF NOT EXISTS bank(
 				project_key TEXT PRIMARY KEY,
+				secret TEXT NOT NULL,
 				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 			)`
 		  );
@@ -31,6 +32,8 @@ export function initDB(){
    db.run(`
 		  CREATE INDEX idx_project_key ON logs(project_key)
   `);
+
+  return db;
 };
 
 

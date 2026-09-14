@@ -4,10 +4,14 @@ import type { MSG_DATA } from "../types/msgData.d.ts";
 
 
 export const LOG_COLUMNS = ["id", "msg", "metaData", "timestamp"] as const;
+
 export class Log {
 	protected LogKeys:Set<string> = new Set();
+	private db:DB;
 
-	constructor(private db:DB){}
+	constructor(db:DB){
+		this.db = db;
+	};
 
 	init = async() => {
 		try{
@@ -59,7 +63,6 @@ export class Log {
 			this.LogKeys.add(projectKey);
 		}catch(e){
 			console.error("FAILURE. Failed to create log");	
-			process.exit(1);
 		};
 	};
 
