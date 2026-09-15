@@ -71,6 +71,25 @@ export class DB{
 		}
 	};
 
+	getWarnAndErrorCount = async(key:string) => {
+		try{
+			const query = this.db.query<{ count:number }, [string]>("SELECT COUNT(*) AS count FROM logs WHERE level = ?");
+
+			const warnings = query.get("warn");
+			const errors = query.get("error")
+			const fatals = query.get("fatal");
+
+			return{
+				warn:warnings?.count ?? 0,
+				error:errors?.count ?? 0,
+				fatal:fatals?.count ?? 0
+			} 
+
+		}catch(e){
+			console.error("Failed to fetch warn and error count.", e);
+		}
+	}
+
 	write = async(key:string, logs:Array<MSG>):Promise<boolean> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta) VALUES (?,?,?,?)");
 		try{

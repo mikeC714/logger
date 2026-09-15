@@ -21,7 +21,7 @@ export async function initDB(){
 	   CREATE TABLE IF NOT EXISTS logs (
 		   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
 		   project_key TEXT,
-		   level TEXT NOT NULL CHECK (level IN ('info', 'warn', 'error', 'fatal', 'debug')),
+		   level TEXT NOT NULL CHECK (level IN ('info', 'good', 'warn', 'error', 'fatal', 'debug')),
 		   msg TEXT,
 		   meta TEXT,
 		   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -12,7 +12,7 @@ export function HomePage(main:any, log:Log) {
 
 	const sideBar = SideBar(main, log.list(), (projectKey) => handleHoverChange(projectKey));
 	const body = Body(main);
-	const { footer, setErrCount, setWarnCount, setMode: setFooterMode } = Footer(main);
+	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main);
 
 	const input = Overlay(main, {
 		onSubmit: (mode, value) => handleOverlaySubmit(mode, value),
@@ -28,6 +28,10 @@ export function HomePage(main:any, log:Log) {
 			.then((entries:any) => {
 				body.showLog(projectKey, entries);
 			});
+		log.getLogErrorAndWarnCount(projectKey)
+			.then((count:any) => {
+				showWarnErrorCount(count)	
+			})
 	};
 
 	async function refreshSidebar() {
@@ -108,8 +112,6 @@ export function HomePage(main:any, log:Log) {
 
 	return {
 		Home: container,
-		setErr: setErrCount,
-		setWarn: setWarnCount,
 		isOverlayOpen: input.isOpen,
 		cancelOverlay: input.cancel,
 		openCreate,
