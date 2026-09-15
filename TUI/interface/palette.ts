@@ -1,4 +1,4 @@
-export const PALETTE = {
+export const PALETTE:Record<string, any> = {
 	bg: "#1E1C1D", //BACKGROUND
 	border: "#5A5D5C", //BORDER COLOR
 	text: "#D9DDDC", //TEXT COLOR 

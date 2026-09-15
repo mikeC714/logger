@@ -24,7 +24,7 @@ export async function initDB(){
 		   level TEXT NOT NULL CHECK (level IN ('info', 'warn', 'error', 'fatal', 'debug')),
 		   msg TEXT,
 		   meta TEXT,
-		   created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+		   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		   FOREIGN KEY (project_key) REFERENCES bank(project_key) ON DELETE CASCADE
 	   )`		
 	);

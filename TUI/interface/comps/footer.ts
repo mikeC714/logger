@@ -52,13 +52,13 @@ export function Footer(main: any) {
 		const currCount = errCount.get().count;
 		errorCounter.content = `${currCount} errors`;
 		main.requestRender();
-	}
+	};
 	function updateWarnCount(warn: number) {
 		warnCount.set(warn);
 		const currCount = warnCount.get().count;
 		warnCounter.content = `${currCount} warnings`;
 		main.requestRender();
-	}
+	};
 
 	function setMode(mode: FooterMode) {
 		hintLabel.content = HINTS[mode];

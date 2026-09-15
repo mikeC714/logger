@@ -2,7 +2,7 @@ import { DB } from "./db.ts";
 import type { MSG_DATA } from "../types/msgData.d.ts";
 
 
-export const LOG_COLUMNS = ["id", "msg", "metaData", "timestamp"] as const;
+export const LOG_COLUMNS = ["timestamp", "msg", "metaData"] as const;
 
 export class Log {
 	protected LogKeys:Set<string> = new Set();

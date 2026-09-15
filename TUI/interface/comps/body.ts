@@ -8,27 +8,45 @@ function headerRow() {
 	return LOG_COLUMNS.map((col:any) => [fg(PALETTE.text)(col)]);
 };
 
-function formatMetaData(meta: META_BODY): string {
-	const parts = [
-		meta.role && `role=${meta.role}`,
-		meta.userId && `user=${meta.userId}`,
-		meta.username && `user=${meta.username}`,
-		meta.timeStamp && `user=${meta.timeStamp}`,
-		meta.version && `user=${meta.version}`,
-		meta.enviroment && `env=${meta.enviroment}`,
-		meta.errorStatus && `user=${meta.errorStatus}`,
-		meta.errorCode && `err=${meta.errorCode}`,
-	].filter(Boolean);
-	return parts.length > 0 ? parts.join(" ") : "-";
+// function formatMetaData(meta: META_BODY): string {
+// 	const parts = [
+// 		meta.role && `role=${meta.role}`,
+// 		meta.userId && `user=${meta.userId}`,
+// 		meta.username && `user=${meta.username}`,
+// 		meta.timeStamp && `user=${meta.timeStamp}`,
+// 		meta.version && `user=${meta.version}`,
+// 		meta.enviroment && `env=${meta.enviroment}`,
+// 		meta.errorStatus && `user=${meta.errorStatus}`,
+// 		meta.errorCode && `err=${meta.errorCode}`,
+// 	].filter(Boolean);
+// 	return parts.length > 0 ? parts.join(" ") : "-";
+// }
+
+function levelColor(level:string){
+	switch(level){
+		case "info":
+			return PALETTE.msgColor.info;
+		case "good":
+			return PALETTE.msgColor.good;
+		case "warn":
+			return PALETTE.msgColor.warn;
+		case "error":
+			return PALETTE.msgColor.error;
+		case "fatal":
+			return PALETTE.msgColor.fatal;
+		case "debug": 
+			return PALETTE.msgColor.debug
+		default:
+			return PALETTE.text;
+	};
 }
 
-function dataRow(entry: LOG_ENTRY) {
+function dataRow(entry:any) {
 	return [
-		String(entry.id),
-		entry.msg,
-		formatMetaData(entry.metaData),
-		entry.timestamp.toISOString(),
-	].map((v) => [fg(PALETTE.text)(v)]);
+		[fg(PALETTE.text)(entry.created_at)],
+		[fg(levelColor(entry?.level))(entry.msg)],
+		[fg(PALETTE.text)(entry.meta)],
+	]
 }
 
 export function Body(main: any) {
@@ -69,14 +87,14 @@ export function Body(main: any) {
 
 	function showLog(name: string, entries: Array<LOG_ENTRY>) {
 		container.title = `${name}: recent entries (${entries.length})`;
-		table.content = [headerRow(), ...entries.map(dataRow)];
+		table.content = [headerRow(), ...entries.map((entry, i) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
-	}
+	};
 
 	function showEmpty() {
 		container.title = "select a log";
 		table.content = [];
-	}
+	};
 
 	return { container, showLog, showEmpty };
 }

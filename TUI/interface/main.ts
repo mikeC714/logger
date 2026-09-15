@@ -3,6 +3,7 @@ import { CONFIG } from "./config.ts";
 import { HomePage } from "./pages/home.ts";
 import { Log } from "../app/log.ts";
 
+
 export async function buildTUI(destroy: boolean | null = null, log:Log | null) {
 	const main = await createCliRenderer({ ...CONFIG });
 	if (destroy === true) {

@@ -23,6 +23,7 @@ export class DB{
 			throw e;	
 		}
 	};
+
 	getAllKeys = () => {
 		try{
 			return this.db.query("SELECT project_key FROM bank").all() as Array<{project_key:string}>;
@@ -30,6 +31,7 @@ export class DB{
 			console.error("Failed to get log keys", e);	
 		}
 	};
+
 	deleteKey = (key:string) => {
 		try{
 			this.db.run("DELETE FROM bank WHERE project_key = ?", [key]);
@@ -38,6 +40,7 @@ export class DB{
 			console.error("Failed to delete log", e);	
 		}
 	};
+
 	deleteAllKeys = () => {
 		try{
 			this.db.query("DELETE FROM bank").run();
@@ -53,6 +56,7 @@ export class DB{
 	getPreviewLogs = async(key:string) => {
 		try{
 			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ? ORDER BY rowid DESC LIMIT ?").all(key, this.limit);
+			console.log(logs);
 			return logs;
 		}catch(e){
 			console.error("Failed to fetch log to preview", e);	
