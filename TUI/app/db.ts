@@ -84,7 +84,6 @@ export class DB{
 			const warnings = query.get(key, "warn");
 			const errors = query.get(key, "error")
 			const fatals = query.get(key, "fatal");
-
 			return{
 				warn:warnings?.count ?? 0,
 				error:errors?.count ?? 0,
