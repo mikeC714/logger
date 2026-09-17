@@ -4,8 +4,9 @@ import { Body } from "../comps/body.ts";
 import { Footer } from "../comps/footer.ts";
 import { Overlay } from "../comps/input.ts";
 import { Methods } from "../methods.ts";
+import { Display } from "./display.ts";
 import type { Log } from "../../app/log.ts";
-import type { MAIN_HINTS } from "../types/hints.d.ts";
+import type { MAIN_HINTS } from "../../types/hints.d.ts";
 
 
 const HINTS:MAIN_HINTS = {
@@ -15,11 +16,26 @@ const HINTS:MAIN_HINTS = {
 	search: "SEARCH — type a filter, Enter to apply, Esc to cancel",
 };
 
-export function HomePage(main:any, log:Log) {
+export function App(main:any, log:Log) {
 	const methods = new Methods(log);
 	let currentQuery = "";
+	let inDisplay = false;
+	let displayPage:any;
 
-	const sideBar = SideBar(main, log.list(), (projectKey) => handleHoverChange(projectKey));
+	const mainContent = new BoxRenderable(main, {
+		id: "mainContent",
+		width: "100%",
+		flexGrow: 1,
+		flexDirection: "row",
+	});
+	const container = new BoxRenderable(main, {
+		id: "homePage",
+		width: "100%",
+		height: "100%",
+		flexDirection: "column",
+	});
+
+	const sideBar = SideBar(main, log.list(), (projectKey:string | null, mode?:string) => handleHover(projectKey, mode));
 	const body = Body(main);
 	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main, HINTS);
 
@@ -28,19 +44,34 @@ export function HomePage(main:any, log:Log) {
 		onCancel: () => handleOverlayCancel(),
 	});
 
-	function handleHoverChange(projectKey: string | null) {
+	mainContent.add(sideBar.container);
+	mainContent.add(body.container);
+	container.add(mainContent);
+	container.add(footer);
+	container.add(input.container);
+
+	function handleHover(projectKey: string | null, mode?:string) {
+		if(mode === undefined) return;
 		if (!projectKey) {
 			body.showEmpty();
 			return;
 		}
-		log.preview(projectKey)
-			.then((entries:any) => {
-				body.showLog(projectKey, entries);
-			});
-		log.getLogErrorAndWarnCount(projectKey)
-			.then((count:any) => {
-				showWarnErrorCount(count)	
-			})
+		switch (mode){
+			case "preview":
+			log.preview(projectKey)
+					.then((entries:any) => {
+						body.showLog(projectKey, entries);
+					});
+			log.getLogErrorAndWarnCount(projectKey)
+					.then((count:any) => {
+						showWarnErrorCount(count)	
+					})
+			break;
+			case "display":
+				inDisplay = true;
+				displayPage = Display(main, log, projectKey);
+			break;
+		}
 	};
 
 	async function refreshSidebar() {
@@ -97,25 +128,6 @@ export function HomePage(main:any, log:Log) {
 		input.open("search");
 	}
 
-	const mainContent = new BoxRenderable(main, {
-		id: "mainContent",
-		width: "100%",
-		flexGrow: 1,
-		flexDirection: "row",
-	});
-	mainContent.add(sideBar.container);
-	mainContent.add(body.container);
-
-	const container = new BoxRenderable(main, {
-		id: "homePage",
-		width: "100%",
-		height: "100%",
-		flexDirection: "column",
-	});
-	container.add(mainContent);
-	container.add(footer);
-	container.add(input.container);
-
 	return {
 		Home: container,
 		isOverlayOpen: input.isOpen,
@@ -123,5 +135,7 @@ export function HomePage(main:any, log:Log) {
 		openCreate,
 		openDelete,
 		openSearch,
+		inDisplay,
+		displayPage,
 	};
 }

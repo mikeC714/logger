@@ -75,7 +75,7 @@ export function Body(main: any) {
 
 	function showLog(name: string, entries: Array<LOG_ENTRY>) {
 		container.title = `${name}: recent entries (${entries.length})`;
-		table.content = [headerRow(), ...entries.map((entry, i) => dataRow(entry))];
+		table.content = [headerRow(), ...entries.map((entry) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
 	};
 

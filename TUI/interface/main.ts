@@ -1,6 +1,6 @@
 import { createCliRenderer } from "@opentui/core";
 import { CONFIG } from "./config.ts";
-import { HomePage } from "./pages/home.ts";
+import { App } from "./pages/app.ts";
 import { Log } from "../app/log.ts";
 
 
@@ -13,7 +13,8 @@ export async function buildTUI(destroy: boolean | null = null, log:Log | null) {
 	
 	if(log === null) throw new Error("Log parameter is null.");
 
-	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch } = HomePage(main, log);
+	const { Home, isOverlayOpen, cancelOverlay, openCreate, openDelete, openSearch, inDisplay, displayPage } = App(main, log);
+	main.root.add(Home);
 
 	main.keyInput.on("keypress", (key: any) => {
 		if (isOverlayOpen()) {
@@ -21,17 +22,32 @@ export async function buildTUI(destroy: boolean | null = null, log:Log | null) {
 			return; 
 		}
 
+	if(inDisplay){
+		const { display, search, refresh } = displayPage;
+		main.root.remove(Home);
+		main.root.add(display);
+
+		switch (key.name) {
+			case "/":
+				search();
+			break;
+			case "|":
+				refresh();
+			break;
+		}
+	};
+
 		switch (key.name) {
 			case "n":
 				openCreate();
-				break;
+			break;
 			case "d":
 				openDelete();
-				break;
+			break;
 			case "/":
 				openSearch();
-				break;
-		}
+			break;
+		};
+
 	});
-	main.root.add(Home);
 }

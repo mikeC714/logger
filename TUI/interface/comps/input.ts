@@ -1,6 +1,6 @@
 import { BoxRenderable, TextRenderable, InputRenderable, InputRenderableEvents } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
-import type { OVERLAY_CALLBACKS, OVERLAY_MODE } from "../types/overlay.d.ts";
+import type { OVERLAY_CALLBACKS, OVERLAY_MODE } from "../../types/overlay.d.ts";
 
 
 
