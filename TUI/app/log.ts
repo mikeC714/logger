@@ -108,5 +108,25 @@ export class Log {
 			process.exit(1);
 		}
 	};
+
+	getLogErrorAndWarnCount = async(projectKey:string) => {
+		try{
+			return await this.db.getWarnAndErrorCount(projectKey);
+		}catch(e){
+			console.log(`FAILURE. Failed to fetch all ${projectKey} warning and error count.`)
+		}
+	}
+
+	filterLogs = async(projectKey:string, query?:string) => {
+		if(query === undefined || query.length === 0){
+			return;
+		};
+		
+		try{
+			return await this.db.getLogsUsingQuery(projectKey, query);
+		}catch(e){
+			console.log(`FAILURE. Failed to fetch queried logs.`)
+		}
+	}
 };
 

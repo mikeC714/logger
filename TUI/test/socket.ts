@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import { io, type Socket as ClientSocket } from "socket.io-client";
 import { beforeAll, afterAll, beforeEach, afterEach, test, expect } from "bun:test";
 import type { Server as IOServer, Socket as ServerSocket } from "socket.io"
-import { socket } from "../config/socket.config.ts";
+import { Socket } from "../config/socket.config.ts";
 import { after } from "node:test";
 
 

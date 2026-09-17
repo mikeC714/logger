@@ -21,16 +21,20 @@ export async function initDB(){
 	   CREATE TABLE IF NOT EXISTS logs (
 		   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
 		   project_key TEXT,
-		   level TEXT NOT NULL CHECK (level IN ('info', 'warn', 'error', 'fatal', 'debug')),
+		   level TEXT NOT NULL CHECK (level IN ('info', 'good', 'warn', 'error', 'fatal', 'debug')),
 		   msg TEXT,
 		   meta TEXT,
 		   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		   FOREIGN KEY (project_key) REFERENCES bank(project_key) ON DELETE CASCADE
 	   )`		
 	);
-   db.run(`
-		  CREATE INDEX idx_project_key ON logs(project_key)
-  `);
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_project_key ON logs(project_key) `);
+
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_timestamp ON logs(project_key, timestamp)`)
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_all_timestamp ON logs(timestamp)`)
+
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_level ON logs(project_key, level)`)
+  	db.run(` CREATE INDEX IF NOT EXISTS idx_log_all_level ON logs(level)`)
 
   return db;
 };

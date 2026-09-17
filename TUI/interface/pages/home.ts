@@ -5,6 +5,15 @@ import { Footer } from "../comps/footer.ts";
 import { Overlay } from "../comps/input.ts";
 import { Methods } from "../methods.ts";
 import type { Log } from "../../app/log.ts";
+import type { MAIN_HINTS } from "../types/hints.d.ts";
+
+
+const HINTS:MAIN_HINTS = {
+	normal: "[n] create   [d] delete   [/] search",
+	create: "CREATE — type a logName, Enter to confirm, Esc to cancel",
+	delete: "DELETE — retype the logName to confirm, Esc to cancel",
+	search: "SEARCH — type a filter, Enter to apply, Esc to cancel",
+};
 
 export function HomePage(main:any, log:Log) {
 	const methods = new Methods(log);
@@ -12,7 +21,7 @@ export function HomePage(main:any, log:Log) {
 
 	const sideBar = SideBar(main, log.list(), (projectKey) => handleHoverChange(projectKey));
 	const body = Body(main);
-	const { footer, setErrCount, setWarnCount, setMode: setFooterMode } = Footer(main);
+	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main, HINTS);
 
 	const input = Overlay(main, {
 		onSubmit: (mode, value) => handleOverlaySubmit(mode, value),
@@ -28,6 +37,10 @@ export function HomePage(main:any, log:Log) {
 			.then((entries:any) => {
 				body.showLog(projectKey, entries);
 			});
+		log.getLogErrorAndWarnCount(projectKey)
+			.then((count:any) => {
+				showWarnErrorCount(count)	
+			})
 	};
 
 	async function refreshSidebar() {
@@ -93,9 +106,6 @@ export function HomePage(main:any, log:Log) {
 	mainContent.add(sideBar.container);
 	mainContent.add(body.container);
 
-	const footerContent = new BoxRenderable(main, { id: "footerContent", width: "100%" });
-	footerContent.add(footer);
-
 	const container = new BoxRenderable(main, {
 		id: "homePage",
 		width: "100%",
@@ -103,13 +113,11 @@ export function HomePage(main:any, log:Log) {
 		flexDirection: "column",
 	});
 	container.add(mainContent);
-	container.add(footerContent);
+	container.add(footer);
 	container.add(input.container);
 
 	return {
 		Home: container,
-		setErr: setErrCount,
-		setWarn: setWarnCount,
 		isOverlayOpen: input.isOpen,
 		cancelOverlay: input.cancel,
 		openCreate,

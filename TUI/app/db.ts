@@ -56,8 +56,10 @@ export class DB{
 	getPreviewLogs = async(key:string) => {
 		try{
 			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ? ORDER BY rowid DESC LIMIT ?").all(key, this.limit);
-			console.log(logs);
-			return logs;
+			return logs.map((log:any) => ({
+				...log,
+				meta:JSON.parse(log.meta)
+			}))
 		}catch(e){
 			console.error("Failed to fetch log to preview", e);	
 		}
@@ -65,11 +67,34 @@ export class DB{
 
 	getAllLogs = async(key:string) => {
 		try{
-			return this.db.query("SELECT * FROM logs WHERE project_key = ?").all(key);
+			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ?").all(key);
+			return logs.map((log:any) => ({
+				...log,
+				meta: JSON.parse(log.meta)
+			}));
 		}catch(e){
 			console.error("Failed to fetch log", e);	
 		}
 	};
+
+	getWarnAndErrorCount = async(key:string) => {
+		try{
+			const query = this.db.query<{ count:number }, [string, string]>("SELECT COUNT(*) AS count FROM logs WHERE project_key = ? AND level = ?");
+
+			const warnings = query.get(key, "warn");
+			const errors = query.get(key, "error")
+			const fatals = query.get(key, "fatal");
+
+			return{
+				warn:warnings?.count ?? 0,
+				error:errors?.count ?? 0,
+				fatal:fatals?.count ?? 0
+			} 
+
+		}catch(e){
+			console.error("Failed to fetch warn and error count.", e);
+		}
+	}
 
 	write = async(key:string, logs:Array<MSG>):Promise<boolean> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta) VALUES (?,?,?,?)");
@@ -92,6 +117,18 @@ export class DB{
 			queryInsert.finalize();
 		}
 	};
+
+	getLogsUsingQuery = async(projectKey:string, query:string) => {
+		try{
+			return this.db.query(`
+						   SELECT * FROM logs 
+							WHERE project_key = ?
+							AND (timestamp LIKE ? OR level LIKE ?) 
+						`).all(projectKey, query, query);
+		}catch(e){
+			throw e;
+		}
+	}
 
 	// ENTRY MONITORING
 	private getEntryCount = async(key:string) => {

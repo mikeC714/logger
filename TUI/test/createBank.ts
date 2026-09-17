@@ -14,7 +14,7 @@ let db:DB;
 let secret:string;
 
 beforeAll(async() => {
-	database = await createDB();
+	database = createDB();
 	db = new DB(database);
 	secret = randomBytes(12).toString("base64url");
 });
@@ -25,7 +25,7 @@ afterAll(async() => {
 
 test("Create Bank return value should be true once creation is complete", () => {
 	try{
-		const res = db.create("TEST_BANK", secret);
+		const res = db.create("TEST_BANK");
 		expect(res).toBe(true);
 	}catch(e){
 		console.error(e)

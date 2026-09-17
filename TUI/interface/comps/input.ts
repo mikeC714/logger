@@ -1,14 +1,10 @@
 import { BoxRenderable, TextRenderable, InputRenderable, InputRenderableEvents } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
+import type { OVERLAY_CALLBACKS, OVERLAY_MODE } from "../types/overlay.d.ts";
 
-export type OverlayMode = "create" | "delete" | "search";
 
-export interface OverlayCallbacks {
-	onSubmit: (mode: OverlayMode, value: string) => void;
-	onCancel: (mode: OverlayMode) => void;
-}
 
-export function Overlay(main: any, callbacks: OverlayCallbacks) {
+export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 	const container = new BoxRenderable(main, {
 		id: "overlay",
 		position: "absolute",
@@ -38,10 +34,10 @@ export function Overlay(main: any, callbacks: OverlayCallbacks) {
 	container.add(input);
 	container.add(hintText);
 
-	let mode: OverlayMode | null = null;
+	let mode: OVERLAY_MODE | null = null;
 	let deleteTarget: string | null = null;
 
-	function open(nextMode: OverlayMode, target?: string) {
+	function open(nextMode: OVERLAY_MODE, target?: string) {
 		mode = nextMode;
 		deleteTarget = nextMode === "delete" ? target ?? null : null;
 		input.value = "";

@@ -1,5 +1,8 @@
 export class Count{
-	private state:{ count:number } = { count:0 };
+	private state:{ count:number };
+	constructor(state:{ count:number } = { count: 0 }){
+		this.state = state;
+	}
 	get = () => {
 		return this.state;
 	};
