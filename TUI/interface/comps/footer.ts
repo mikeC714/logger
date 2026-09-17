@@ -1,6 +1,6 @@
 import { BoxRenderable, TextRenderable } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
-import type { MAIN_HINTS, MAIN_FOOTER_MODE, DISPLAY_FOOTER_MODE, DISPLAY_HINTS } from "../types/hints.d.ts";
+import type { MAIN_HINTS, MAIN_FOOTER_MODE, DISPLAY_FOOTER_MODE, DISPLAY_HINTS } from "../../types/hints.d.ts";
 
 
 
@@ -35,7 +35,6 @@ export function Footer(main: any, hints:MAIN_HINTS | DISPLAY_HINTS | any) {
 		warnCounter.content = `${count?.warn} warnings`;
 		fatalCounter.content = `${count?.fatal} fatals`
 	};
-
 
 	function setMode(mode:MAIN_FOOTER_MODE | DISPLAY_FOOTER_MODE | any) {
 		hintLabel.content = hints[mode];

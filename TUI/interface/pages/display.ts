@@ -50,7 +50,6 @@ export function Display(main:any, log:Log, projectKey:string){
 	return { 
 		display:container,
 		search:openSearch,
-		displayCount:showWarnErrorCount,
 		refresh,
 	}
 }

@@ -73,8 +73,8 @@ export function Body(main: any) {
 	scrollBox.content.add(table);
 	container.add(scrollBox);
 
-	function showLog(name: string, entries: Array<LOG_ENTRY>) {
-		container.title = `${name}: recent entries (${entries.length})`;
+	function showLog(projectKey: string, entries: Array<LOG_ENTRY>) {
+		container.title = `${projectKey}: recent entries (${entries.length})`;
 		table.content = [headerRow(), ...entries.map((entry) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
 	};
