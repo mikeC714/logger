@@ -117,7 +117,7 @@ export class Log {
 		}
 	}
 
-	filterLogs = async(projectKey:string, query?:string) => {
+	filterLog = async(projectKey:string, query?:string) => {
 		if(query === undefined || query.length === 0){
 			return;
 		};

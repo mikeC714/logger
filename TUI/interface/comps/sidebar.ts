@@ -1,7 +1,7 @@
 import { BoxRenderable, SelectRenderable, SelectRenderableEvents } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
 
-export function SideBar(main: any, initialNames: Array<string>, onHover: (name: string | null, mode?:string) => void) {
+export function SideBar(main: any, initialNames: Array<string>, onHover: (name: string | null, mode:string | null) => void) {
 	const container = new BoxRenderable(main, {
 		id: "sideBar",
 		width: "30%",
@@ -57,7 +57,7 @@ export function SideBar(main: any, initialNames: Array<string>, onHover: (name: 
 		if (names.length > 0) {
 			select.setSelectedIndex(0);
 		} else {
-			onHover(null);
+			onHover(null, null);
 		}
 	}
 

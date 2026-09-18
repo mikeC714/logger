@@ -4,7 +4,6 @@ import { Body } from "../comps/body.ts";
 import { Footer } from "../comps/footer.ts";
 import { Overlay } from "../comps/input.ts";
 import { Methods } from "../methods.ts";
-import { Display } from "./display.ts";
 import type { Log } from "../../app/log.ts";
 import type { MAIN_HINTS } from "../../types/hints.d.ts";
 
@@ -16,11 +15,10 @@ const HINTS:MAIN_HINTS = {
 	search: "SEARCH — type a filter, Enter to apply, Esc to cancel",
 };
 
-export function App(main:any, log:Log) {
+export function HomePage(main:any, log:Log) {
 	const methods = new Methods(log);
 	let currentQuery = "";
-	let inDisplay = false;
-	let displayPage:any;
+	let currModeValues:{ mode:string | null, value?:string} = {mode:"", value:""};
 
 	const mainContent = new BoxRenderable(main, {
 		id: "mainContent",
@@ -35,43 +33,30 @@ export function App(main:any, log:Log) {
 		flexDirection: "column",
 	});
 
-	const sideBar = SideBar(main, log.list(), (projectKey:string | null, mode?:string) => handleHover(projectKey, mode));
+	const sideBar = SideBar(
+		main, 
+		log.list(), 
+		(projectKey:string | null, mode:string | null) => {
+			currModeValues.mode = mode; 
+			currModeValues.value = projectKey || undefined 
+			handleHover(projectKey)
+		}
+	);
+
 	const body = Body(main);
 	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main, HINTS);
-
 	const input = Overlay(main, {
 		onSubmit: (mode, value) => handleOverlaySubmit(mode, value),
 		onCancel: () => handleOverlayCancel(),
 	});
 
-	mainContent.add(sideBar.container);
-	mainContent.add(body.container);
-	container.add(mainContent);
-	container.add(footer);
-	container.add(input.container);
-
-	function handleHover(projectKey: string | null, mode?:string) {
-		if(mode === undefined) return;
+	function handleHover(projectKey: string | null) {
 		if (!projectKey) {
 			body.showEmpty();
 			return;
-		}
-		switch (mode){
-			case "preview":
-			log.preview(projectKey)
-					.then((entries:any) => {
-						body.showLog(projectKey, entries);
-					});
-			log.getLogErrorAndWarnCount(projectKey)
-					.then((count:any) => {
-						showWarnErrorCount(count)	
-					})
-			break;
-			case "display":
-				inDisplay = true;
-				displayPage = Display(main, log, projectKey);
-			break;
-		}
+		};
+		log.preview(projectKey).then((entries:any) => body.showLog(projectKey, entries));
+		log.getLogErrorAndWarnCount(projectKey).then((count:any) => showWarnErrorCount(count));	
 	};
 
 	async function refreshSidebar() {
@@ -128,14 +113,36 @@ export function App(main:any, log:Log) {
 		input.open("search");
 	}
 
+	main.keyInput.on("keypress", (key: any) => {
+		if (input.isOpen()) {
+			if (key.name === "escape") input.cancel();
+			return; 
+		}
+		switch (key.name) {
+			case "n":
+				openCreate();
+			break;
+			case "d":
+				openDelete();
+			break;
+			case "/":
+				openSearch();
+			break;
+		};
+
+	});
+
+	mainContent.add(sideBar.container);
+	mainContent.add(body.container);
+	container.add(mainContent);
+	container.add(footer);
+	container.add(input.container);
+
 	return {
 		Home: container,
-		isOverlayOpen: input.isOpen,
-		cancelOverlay: input.cancel,
+		currModeValues,
 		openCreate,
 		openDelete,
 		openSearch,
-		inDisplay,
-		displayPage,
 	};
 }

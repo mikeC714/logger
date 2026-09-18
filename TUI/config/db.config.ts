@@ -30,8 +30,8 @@ export async function initDB(){
 	);
 	db.run(` CREATE INDEX IF NOT EXISTS idx_log_project_key ON logs(project_key) `);
 
-	db.run(` CREATE INDEX IF NOT EXISTS idx_log_timestamp ON logs(project_key, timestamp)`)
-	db.run(` CREATE INDEX IF NOT EXISTS idx_log_all_timestamp ON logs(timestamp)`)
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_timestamp ON logs(project_key, created_at)`)
+	db.run(` CREATE INDEX IF NOT EXISTS idx_log_all_timestamp ON logs(created_at)`)
 
 	db.run(` CREATE INDEX IF NOT EXISTS idx_log_level ON logs(project_key, level)`)
   	db.run(` CREATE INDEX IF NOT EXISTS idx_log_all_level ON logs(level)`)

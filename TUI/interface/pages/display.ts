@@ -11,7 +11,9 @@ const HINTS:DISPLAY_HINTS = {
 	refresh: "REFRESH — refresh log"
 } 
 
-export function Display(main:any, log:Log, projectKey:string){
+export function DisplayPage(main:any, log:Log, projectKey:string){
+	let previousPage = ""
+
 	const container = new BoxRenderable(main,{
 		id:"displayContainer",
 	});
@@ -38,19 +40,34 @@ export function Display(main:any, log:Log, projectKey:string){
 	function handleOverlayCancel(){
 		setMode("normal");
 	};
-
+	
 	function handleOverlaySubmit(value:string){
 		if(value.length === 0 || value === undefined) return;
-		log.filterLogs(projectKey, value)
+		log.filterLog(projectKey, value)
 	};
 
+	main.keyInput.on("keypress", (key: any) => {
+		if (input.isOpen()) {
+			if (key.name === "escape") input.cancel();
+			return; 
+		}
+		switch (key.name) {
+			case "r":
+				refresh();
+			break;
+			case "/":
+				openSearch();
+			break;
+		};
+	});
+
 	container.add(body)
+	container.add(input);
 	container.add(footer);
 
 	return { 
-		display:container,
-		search:openSearch,
-		refresh,
+		Display:container,
+		previousPage
 	}
 }
 
