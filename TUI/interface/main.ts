@@ -4,14 +4,11 @@ import { App } from "./app.ts";
 import { Log } from "../app/log.ts";
 
 
-export async function buildTUI(destroy: boolean | null = null, log:Log) {
+export async function buildTUI(log:Log) {
 	const main = await createCliRenderer({ ...CONFIG });
-	if (destroy === true) {
-		main.destroy();
-		return;
+	const { show } = App(main, log);
+	return {
+		show,
+		destroy: () => main.destroy()
 	}
-	const { container } = App(main, log);
-
-	main.root.add(container);
-
 }

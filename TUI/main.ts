@@ -40,10 +40,10 @@ async function MAIN(){
 	const log = new Log(db);
 
 	await log.init();
-	await buildTUI(null, log);
+	const tui = await buildTUI(log);
 
 	process.on("SIGINT", () => {
-		buildTUI(true, null);
+		tui.destroy();
 		process.exit(0);
 	});
 };

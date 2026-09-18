@@ -1,4 +1,4 @@
-import { Body } from "../comps/body.ts";
+import { LogTable } from "../comps/table.ts";
 import { Footer } from "../comps/footer.ts";
 import { Overlay } from "../comps/input.ts";
 import { BoxRenderable } from "@opentui/core";
@@ -11,39 +11,57 @@ const HINTS:DISPLAY_HINTS = {
 	refresh: "REFRESH — refresh log"
 } 
 
-export function DisplayPage(main:any, log:Log, projectKey:string){
-	let previousPage = ""
+
+type DisplayCallbacks = { onBack:() => void };
+export function DisplayPage(main:any, log:Log, { onBack }:DisplayCallbacks){
+	let projectKey: string | null = null;
+	let active = false;
 
 	const container = new BoxRenderable(main,{
 		id:"displayContainer",
+		width:"100%",
+		height:"100%",
+		flexDirection:"column",
 	});
-	const body = Body(main);
-	log.getAllLogs(projectKey) .then((logs:any) => body.showLog(projectKey, logs));
 
+	const table = LogTable(main, projectKey!);
 	const { footer, showWarnErrorCount, setMode } = Footer(main, HINTS);		
-	log.getLogErrorAndWarnCount(projectKey).then((count:any) => showWarnErrorCount(count))
-
 	const input = Overlay(main, {
 		onSubmit:(_, value) => handleOverlaySubmit(value),
 		onCancel: () => handleOverlayCancel()
 	});
+
+	async function load(query = ""){
+		const key = projectKey;
+		if(!key) return;
+		const logs = query
+			? await log.filterLog(key, query)
+			: await log.getAllLogs(key);
+		if(key !== projectKey) return;
+		table.showLog(key, logs as any)
+	}
+
+	function setValue(key:string){
+		projectKey = key;
+		setMode("normal");
+		load();
+		log.getLogErrorAndWarnCount(key).then((count:any) => {
+			if(key === projectKey) showWarnErrorCount(count);
+		})
+	}
 
 	function openSearch(){
 		setMode("search");
 		input.open("search");
 	};
 
-	function refresh(){
-		log.getAllLogs(projectKey);
+	function handleOverlaySubmit(value:string){
+		load(value.trim());
+		setMode("normal");
 	};
 
 	function handleOverlayCancel(){
 		setMode("normal");
-	};
-	
-	function handleOverlaySubmit(value:string){
-		if(value.length === 0 || value === undefined) return;
-		log.filterLog(projectKey, value)
 	};
 
 	main.keyInput.on("keypress", (key: any) => {
@@ -51,23 +69,26 @@ export function DisplayPage(main:any, log:Log, projectKey:string){
 			if (key.name === "escape") input.cancel();
 			return; 
 		}
-		switch (key.name) {
-			case "r":
-				refresh();
-			break;
-			case "/":
-				openSearch();
-			break;
-		};
+			if(!active) return;
+			if(input.isOpen()){
+				if(key.name === "escape") input.cancel();
+				return;
+			}
+			switch (key.name) {
+				case "r": load(); break;
+				case "/": openSearch(); break;
+				case "escape": onBack(); break;
+			};
 	});
 
-	container.add(body)
+	container.add(table)
 	container.add(input);
 	container.add(footer);
 
 	return { 
 		Display:container,
-		previousPage
+		setValue,
+		setActive(value:boolean){ active = value }
 	}
 }
 

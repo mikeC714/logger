@@ -15,10 +15,12 @@ const HINTS:MAIN_HINTS = {
 	search: "SEARCH — type a filter, Enter to apply, Esc to cancel",
 };
 
-export function HomePage(main:any, log:Log) {
+type HomeCallbacks = { onOpen: (projectKey:string) => void }
+
+export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 	const methods = new Methods(log);
 	let currentQuery = "";
-	let currModeValues:{ mode:string | null, value?:string} = {mode:"", value:""};
+	let active = true;
 
 	const mainContent = new BoxRenderable(main, {
 		id: "mainContent",
@@ -37,8 +39,10 @@ export function HomePage(main:any, log:Log) {
 		main, 
 		log.list(), 
 		(projectKey:string | null, mode:string | null) => {
-			currModeValues.mode = mode; 
-			currModeValues.value = projectKey || undefined 
+			if(mode === "display"){
+				if(projectKey) onOpen(projectKey);
+				return;
+			}
 			handleHover(projectKey)
 		}
 	);
@@ -114,20 +118,15 @@ export function HomePage(main:any, log:Log) {
 	}
 
 	main.keyInput.on("keypress", (key: any) => {
+		if(!active) return;
 		if (input.isOpen()) {
 			if (key.name === "escape") input.cancel();
 			return; 
 		}
 		switch (key.name) {
-			case "n":
-				openCreate();
-			break;
-			case "d":
-				openDelete();
-			break;
-			case "/":
-				openSearch();
-			break;
+			case "n": openCreate(); break;
+			case "d": openDelete(); break;
+			case "/": openSearch(); break;
 		};
 
 	});
@@ -140,9 +139,9 @@ export function HomePage(main:any, log:Log) {
 
 	return {
 		Home: container,
-		currModeValues,
-		openCreate,
-		openDelete,
-		openSearch,
+		setActive(value:boolean){
+			active = value;
+			if(value) sideBar.focus();
+		}
 	};
 }
