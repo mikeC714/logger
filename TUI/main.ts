@@ -15,9 +15,10 @@ function testFunc(database:Database){
 
 	const projectKey = "test_key_1";
 	const logs = getLogs();
+	const hash = Bun.SHA256.hash(projectKey, "hex");
 
 	try{
-		database.run("INSERT INTO bank (project_key) VALUES(?)", [projectKey]);
+		database.run("INSERT INTO bank (project_key, secret) VALUES(?, ?)", [projectKey, hash]);
 		database.transaction(() => {
 			for(const log of logs.logs){
 				write.run(logs.projectKey, log.lvl, log.msg, JSON.stringify(log.meta));

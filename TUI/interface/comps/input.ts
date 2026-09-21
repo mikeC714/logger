@@ -30,17 +30,12 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 		fg: PALETTE.border,
 	});
 
-	container.add(promptText);
-	container.add(input);
-	container.add(hintText);
-
 	let mode: OVERLAY_MODE | null = null;
 	let deleteTarget: string | null = null;
 
 	function open(nextMode: OVERLAY_MODE, target?: string) {
 		mode = nextMode;
 		deleteTarget = nextMode === "delete" ? target ?? null : null;
-		input.value = "";
 		hintText.content = "Enter to confirm  ·  Esc to cancel";
 		hintText.fg = PALETTE.border;
 
@@ -64,6 +59,7 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 		}
 
 		container.visible = true;
+		input.value = "";
 		input.focus();
 	}
 
@@ -101,5 +97,9 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 		callbacks.onSubmit(finishedMode, value);
 	});
 
-	return { input:container, open, close, isOpen, cancel };
+	container.add(promptText);
+	container.add(input);
+	container.add(hintText);
+
+	return { input:container, inputField:input, open, close, isOpen, cancel };
 }

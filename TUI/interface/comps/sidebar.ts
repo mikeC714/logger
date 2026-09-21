@@ -1,7 +1,7 @@
 import { BoxRenderable, SelectRenderable, SelectRenderableEvents } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
 
-export function SideBar(main: any, initialNames: Array<string>, onHover: (name: string | null, mode:string | null) => void) {
+export function SideBar(main: any, initialNames: Array<string> | Array<[string, string]>, onHover: (name: string | null, mode:string | null) => void) {
 	const container = new BoxRenderable(main, {
 		id: "sideBar",
 		width: "30%",
@@ -14,7 +14,7 @@ export function SideBar(main: any, initialNames: Array<string>, onHover: (name: 
 		flexDirection: "column",
 	});
 
-	let visibleNames: string[] = [];
+	let visible: Array<[string, string]> = [];
 
 	const select = new SelectRenderable(main, {
 		id: "sideBar-select",
@@ -49,10 +49,9 @@ export function SideBar(main: any, initialNames: Array<string>, onHover: (name: 
 
 	container.add(select);
 
-	function setNames(names:Array<string>, total: number) {
-		visibleNames = names;
-		console.log(visibleNames)
-		select.options = names.map((name) => ({ name, description: "", value: name }));
+	function setNames(names:Array<[string, string]>, total: number) {
+		visible = names;
+		select.options = names.map(([name, _]) => ({ name, description: "", value: name }));
 		container.title = `logs ${names.length}/${total}`;
 		if (names.length > 0) {
 			select.setSelectedIndex(0);
@@ -62,14 +61,14 @@ export function SideBar(main: any, initialNames: Array<string>, onHover: (name: 
 	}
 
 	function getHovered(): string | null {
-		if (visibleNames.length === 0) return null;
+		if (visible.length === 0) return null;
 		const opt = select.getSelectedOption();
 		return opt ? String(opt.value) : null;
 	}
 
 	function selectIndexClamped(index: number) {
-		if (visibleNames.length === 0) return;
-		const clamped = Math.max(0, Math.min(index, visibleNames.length - 1));
+		if (visible.length === 0) return;
+		const clamped = Math.max(0, Math.min(index, visible.length - 1));
 		select.setSelectedIndex(clamped);
 	}
 

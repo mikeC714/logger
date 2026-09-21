@@ -14,9 +14,9 @@ export class DB{
 	// RECIEVING 
 	// DELETING
 	// ALL KEY RELATED
-	create = (key:string):boolean => {
+	create = (key:string, hash:string):boolean => {
 		try{
-			this.db.run("INSERT INTO bank (project_key) VALUES (?)", [key]);
+			this.db.run("INSERT INTO bank (project_key, secret) VALUES (?, ?)", [key, hash]);
 			return true
 		}catch(e){
 			console.log(e);
@@ -24,9 +24,9 @@ export class DB{
 		}
 	};
 
-	getAllKeys = () => {
+	getAllKeysNSecrets = () => {
 		try{
-			return this.db.query("SELECT project_key FROM bank").all() as Array<{project_key:string}>;
+			return this.db.query("SELECT project_key, secret FROM bank").all() as Array<{project_key:string, secret:string}>;
 		}catch(e){
 			console.error("Failed to get log keys", e);	
 		}

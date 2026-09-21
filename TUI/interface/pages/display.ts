@@ -85,7 +85,10 @@ export function DisplayPage(main:any, log:Log, { onBack }:DisplayCallbacks){
 			}
 			switch (key.name) {
 				case "r": load(); break;
-				case "/": openSearch(); break;
+				case "/": 
+					openSearch(); 
+					key.preventDefault();
+				break;
 				case "escape": onBack(); break;
 			};
 	});

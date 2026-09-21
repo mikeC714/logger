@@ -46,7 +46,7 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 		}
 	);
 
-	const body = Body(main);
+	const { body, unhide, showLog, showEmpty } = Body(main);
 	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main, HINTS);
 	const { input, open, isOpen, close, cancel } = Overlay(main, {
 		onSubmit: (mode, value) => {
@@ -58,17 +58,17 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 
 	function handleHover(projectKey: string | null) {
 		if (!projectKey) {
-			body.showEmpty();
+			showEmpty();
 			return;
 		};
-		log.preview(projectKey).then((entries:any) => body.showLog(projectKey, entries));
+		log.preview(projectKey).then((entries:any) => showLog(projectKey, entries));
 		log.getLogErrorAndWarnCount(projectKey).then((count:any) => showWarnErrorCount(count));	
 	};
 
 	async function refreshSidebar() {
 		const visible = await log.filter(currentQuery);
 		sideBar.setNames(visible, log.list().length);
-		if (visible.length === 0) body.showEmpty();
+		if (visible.length === 0) showEmpty();
 	}
 
 	function returnToNormal() {
@@ -130,16 +130,32 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 			return; 
 		}
 		switch (key.name) {
-			case "n": openCreate(); break;
-			case "d": openDelete(); break;
-			case "r": refresh(); break; 
-			case "/": openSearch(); break;
+			case "n": 
+				openCreate(); 
+				key.preventDefault();
+			break;
+			case "d": 
+				openDelete();
+				key.preventDefault();
+			break;
+			case "h":
+				unhide(currHovered);
+				key.preventDefault();
+			break;
+			case "r": 
+				refresh(); 
+				key.preventDefault();
+			break; 
+			case "/":
+				openSearch(); 
+				key.preventDefault();
+			break;
 		};
 
 	});
 
 	mainContent.add(sideBar.container);
-	mainContent.add(body.container);
+	mainContent.add(body);
 	container.add(mainContent);
 	container.add(footer);
 	container.add(input);

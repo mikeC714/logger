@@ -78,11 +78,14 @@ export function Body(main: any) {
 		table.content = [headerRow(), ...entries.map((entry) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
 	};
+	function unhide(secret:string){
+		container.title = `${secret}`;
+	}
 
 	function showEmpty() {
 		container.title = "select a log";
 		table.content = [];
 	};
 
-	return { container, showLog, showEmpty };
+	return { body:container, unhide, showLog, showEmpty };
 }
