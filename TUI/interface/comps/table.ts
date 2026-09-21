@@ -36,8 +36,6 @@ export function LogTable(main:any, projectKey:string){
 		content: [headerFormat()],
 	});
 
-	scrollBox.content.add(table);
-	container.add(scrollBox);
 
 	function headerFormat(){
 		return LOG_COLUMNS.map((c:any) => [fg(PALETTE.text)(c)])
@@ -45,20 +43,13 @@ export function LogTable(main:any, projectKey:string){
 
 	function levelColor(level:string){
 		switch(level){
-			case "info":
-				return PALETTE.msgColor.info;
-			case "good":
-				return PALETTE.msgColor.good;
-			case "warn":
-				return PALETTE.msgColor.warn;
-			case "error":
-				return PALETTE.msgColor.error;
-			case "fatal":
-				return PALETTE.msgColor.fatal;
-			case "debug": 
-				return PALETTE.msgColor.debug
-			default:
-				return PALETTE.text;
+			case "info": return PALETTE.msgColor.info;
+			case "good": return PALETTE.msgColor.good;
+			case "warn": return PALETTE.msgColor.warn;
+			case "error": return PALETTE.msgColor.error;
+			case "fatal": return PALETTE.msgColor.fatal;
+			case "debug": return PALETTE.msgColor.debug
+			default: return PALETTE.text;
 		};
 	};
 
@@ -67,22 +58,25 @@ export function LogTable(main:any, projectKey:string){
 			[fg(PALETTE.text)(entry.created_at)],
 			[fg(levelColor(entry?.level))(entry.msg)],
 			[fg(PALETTE.text)(Object.entries(entry.meta)
-							 .map(([k, v]) => `${k} : ${v}`)
+							 .map(([key, value]) => `${key} : ${value}`)
 							 .join(" ")
 			)],
 		];
 	}
 
 	function showLog(projectKey: string, entries: Array<LOG_ENTRY>) {
-		container.title = `${projectKey}: recent entries (${entries.length})`;
+		container.title = `${projectKey}: (${entries.length})`;
 		table.content = [headerFormat(), ...entries.map((entry) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
 	};
 
-	function showEmpty() {
-		container.title = "select a log";
+	function showEmpty(projectKey:string) {
+		container.title = `${projectKey}: 0`;
 		table.content = [];
 	};
 
-	return { container, showLog, showEmpty };
+	scrollBox.content.add(table);
+	container.add(scrollBox);
+
+	return { table:container, showLog, showEmpty };
 }

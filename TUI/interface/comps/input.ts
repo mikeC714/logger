@@ -48,15 +48,19 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 			case "create":
 				container.title = "Create log";
 				input.placeholder = "logName";
-				break;
+			break;
 			case "delete":
 				container.title = "Delete log";
 				input.placeholder = deleteTarget ?? "";
-				break;
+			break;
 			case "search":
 				container.title = "Search logs";
 				input.placeholder = "search text";
-				break;
+			break;
+			case "filter":
+				container.title = "Filter log";
+				input.placeholder = "Filter search";
+			break;
 		}
 
 		container.visible = true;
@@ -97,5 +101,5 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 		callbacks.onSubmit(finishedMode, value);
 	});
 
-	return { container, open, close, isOpen, cancel };
+	return { input:container, open, close, isOpen, cancel };
 }

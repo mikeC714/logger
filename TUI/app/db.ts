@@ -119,11 +119,7 @@ export class DB{
 
 	getLogsUsingQuery = async(projectKey:string, query:string) => {
 		try{
-			return this.db.query(`
-						   SELECT * FROM logs 
-							WHERE project_key = ?
-							AND (timestamp LIKE ? OR level LIKE ?) 
-						`).all(projectKey, query, query);
+			return this.db.query(`SELECT * FROM logs WHERE project_key = ? AND (created_at LIKE ? OR level LIKE ?)`).all(projectKey, query, query);
 		}catch(e){
 			throw e;
 		}
@@ -132,7 +128,7 @@ export class DB{
 	// ENTRY MONITORING
 	private getEntryCount = async(key:string) => {
 		try{
-			return this.db.query("SELECT COUNT(*) as count FROM logs WHERE project_key = $project_key").get({ $project_key: key }) as { count:number };
+			return this.db.query(`SELECT COUNT(*) as count FROM logs WHERE project_key = $project_key`).get({ $project_key: key }) as { count:number };
 		}catch(e){
 			throw e;
 		}

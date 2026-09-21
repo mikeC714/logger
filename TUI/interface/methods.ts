@@ -5,7 +5,7 @@ export class Methods {
 
 	async create(logName: string): Promise<boolean> {
 		try {
-			await this.log.create(logName);
+			this.log.create(logName);
 			return true;
 		} catch (e) {
 			console.error(`FAILURE. Failed to create Log: ${logName}.`, e);
@@ -15,7 +15,7 @@ export class Methods {
 
 	async delete(logName: string): Promise<boolean> {
 		try {
-			await this.log.delete(logName);
+			this.log.delete(logName);
 			return true;
 		} catch (e: any) {
 			console.error(`FAILURE. Failed to delete Log: ${logName}. ${e?.message}`);
@@ -23,8 +23,18 @@ export class Methods {
 		}
 	}
 
+	async refresh(logName:string):Promise<any>{
+		try{
+			return this.log.preview(logName);
+		}catch(e:any){
+			console.error(`FAILURE. Failed to refresh Log: ${logName}`);
+			return;
+		}
+	}
+
 	async filter(value:string):Promise<Array<string>> {
 		return await this.log.filter(value);
 	}
+
 }
 

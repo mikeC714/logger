@@ -1,4 +1,4 @@
-type OVERLAY_MODE = "create" | "delete" | "search";
+type OVERLAY_MODE = "create" | "delete" | "search" | "filter";
 
 interface OVERLAY_CALLBACKS {
 	onSubmit: (mode: OVERLAY_MODE, value: string) => void;

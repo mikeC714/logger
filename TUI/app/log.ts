@@ -1,7 +1,6 @@
 import { DB } from "./db.ts";
 import type { MSG_DATA } from "../types/msgData.d.ts";
 
-
 export const LOG_COLUMNS = ["timestamp", "msg", "metaData"] as const;
 
 export class Log {
@@ -55,7 +54,7 @@ export class Log {
 
 
 	// CREATING A BANK
-	create = (projectKey:string) 	=> {
+	create = async(projectKey:string):Promise<void> => {
 		if(this.LogKeys.has(projectKey)) return; 
 		try{
 			this.db.create(projectKey);
@@ -66,7 +65,7 @@ export class Log {
 	};
 
 	// DELETE BANK
-	delete = (projectKey:string) => {
+	delete = async(projectKey:string):Promise<void> => {
 		if(!this.LogKeys.has(projectKey)) return;
 		try{
 			this.db.deleteKey(projectKey);
@@ -117,15 +116,12 @@ export class Log {
 		}
 	}
 
-	filterLog = async(projectKey:string, query?:string) => {
-		if(query === undefined || query.length === 0){
-			return;
-		};
-		
+	filterLog = async(projectKey:string, query:string) => {
 		try{
 			return await this.db.getLogsUsingQuery(projectKey, query);
 		}catch(e){
 			console.log(`FAILURE. Failed to fetch queried logs.`)
+			throw e;
 		}
 	}
 };

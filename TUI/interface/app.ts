@@ -28,7 +28,7 @@ export function App(main:any, log:Log){
 			home.setActive(false);
 			display.setValue(value!);
 			current = display.Display;
-			container.add(display);
+			container.add(display.Display);
 			display.setActive(true);
 		};
 	};
