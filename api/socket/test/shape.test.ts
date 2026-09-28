@@ -1,8 +1,8 @@
 import {describe, before, after, test} from "node:test";
 import request from "supertest";
 import assert from "node:assert";
-import { build } from ".././../../app.ts";
-import { log, buildSocket } from "../mocks.ts";
+import { build } from ".././../app.ts";
+import { log, buildSocket } from "./mocks.ts";
 
 /**
  *  TEST WILL INCLUDE: 
@@ -52,9 +52,9 @@ after(async() => {
 
 test("Send log to client socket", { timeout: 10000, } ,async() => {
 	const res = await req	
-					.post("/api/log")
-					.set("Content-type", "application/json")
-					.send(log);	 
+				.post("/api/log")
+				.set("Content-type", "application/json")
+				.send(log);	 
 
 	assert.strictEqual(res.status, 201)
 	assert.strictEqual(res.ok, true);

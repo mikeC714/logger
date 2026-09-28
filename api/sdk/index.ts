@@ -26,13 +26,13 @@ const CONFIG = {
 	}
 } as const;
 
-
 export class Logger{
-	private server:string = process.env.SERVER as string;
-	private batchLimit:number = 20;
-	private batch:Array<object> = []; 
+	// change to host 
+	readonly server:string = process.env.SERVER as string;
+	readonly batchLimit:number = 20;
+	readonly timeLimit:number = 5000;
 	private timer:any = null;
-	private timeLimit:number = 5000;
+	private batch:Array<object> = []; 
 	config:typeof CONFIG;
 
 	constructor(config: Partial<typeof CONFIG> & { notifications?: Partial<typeof CONFIG.notifications> } = {}){

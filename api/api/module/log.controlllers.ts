@@ -13,6 +13,6 @@ export class Log{
 	}
 	log = async(req:FastifyRequest<{Body:REQ_BODY}>, rep:FastifyReply) => {
 		await this.socketService.writeToClient(req.body as REQ_BODY);
-		return rep.code(201).send({ ok:true, body: req.body })
+		return rep.code(201).send({ ok:true })
 	};
 }

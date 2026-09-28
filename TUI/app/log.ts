@@ -28,7 +28,7 @@ export class Log {
 		};
 	}
 
-	list = ():Array<string> => {
+	list = ():Array<string> | Array<[string, string]> => {
 		let keys:Array<string> = [];
 		if(this.LogKeys.size === 0) return keys;
 

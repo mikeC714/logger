@@ -1,4 +1,5 @@
 import fp from "fastify-plugin";
+import { date } from "../../utils/date.ts";
 import { Server } from "socket.io";
 
 function ws_plugin(fastify:any, opts:{}){
@@ -15,7 +16,7 @@ function ws_plugin(fastify:any, opts:{}){
 	io.use((socket, next) => {
 		const { projectKey, key } = socket.handshake.auth;
 		if(key !== process.env.SOCKET_KEY || !projectKey){
-			fastify.log.warn(`Undisclosed socket attempted to connect. SOCKET:${socket}, TIME: ${Date.now()}`);
+			fastify.log.warn(`${date} Undisclosed socket attempted to connect. socket:${socket}`);
 			socket.disconnect(true);
 			return;
 		};
@@ -29,7 +30,7 @@ function ws_plugin(fastify:any, opts:{}){
 			return;
 		};
 	
-		fastify.log.info(`Socket: ${socket.id} connected to project: ${key}`);
+		fastify.log.info(`${date} Socket: ${socket.id} connected to project: ${key}`);
 
 		socket.emit("connected", true);
 		socket.on("join_room", async(pKey:string, fn:(ack:{ ok:boolean, key:string })=>void) => {
@@ -59,10 +60,6 @@ function ws_plugin(fastify:any, opts:{}){
 		}
 		// disconnect
 		// return err 
-	})
-
-	fastify.addHook('onClose', (done:boolean) => {
-		//close client but connect to queue 
 	})
 }
 

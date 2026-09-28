@@ -6,7 +6,7 @@
 	"allowImportingTsExtensions":true,
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    "types": ["node"],
     "lib": ["esnext"],
     "sourceMap": true,
     "declaration": true,

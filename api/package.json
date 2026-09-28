@@ -18,7 +18,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
-    "@types/node": "^26.5.0",
+    "@types/node": "^26.6.3",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.2.1",
     "dotenv": "^17.4.2",

@@ -8,7 +8,7 @@ import type { MAIN_HINTS } from "../../types/hints.d.ts";
 
 
 const HINTS:MAIN_HINTS = {
-	normal: "[n] create   [d] delete   [r] refresh   [/] search",
+	normal: "[n] create   [d] delete   [h] hide/unhide   [r] refresh   [/] search",
 	create: "CREATE — type a logName, Enter to confirm, Esc to cancel",
 	delete: "DELETE — retype the logName to confirm, Esc to cancel",
 	search: "SEARCH — type a filter, Enter to apply, Esc to cancel",
