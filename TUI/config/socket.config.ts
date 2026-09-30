@@ -4,6 +4,7 @@ import type { MSG_DATA } from "../types/msgData.d.ts";
 
 
 export function Socket(log:Log){
+	//change to host 
 	const socket = io(process.env.SERVER,{
 		auth:{
 			key:process.env.SOCKET_KEY,

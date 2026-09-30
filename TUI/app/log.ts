@@ -1,4 +1,5 @@
 import { DB } from "./db.ts";
+import { Socket } from "../config/socket.config.ts";
 import type { MSG_DATA } from "../types/msgData.d.ts";
 
 export const LOG_COLUMNS = ["timestamp", "msg", "metaData"] as const;
@@ -6,9 +7,11 @@ export const LOG_COLUMNS = ["timestamp", "msg", "metaData"] as const;
 export class Log {
 	protected LogKeys:Map<string, string> = new Map();
 	private db:DB;
+	private socket?:typeof Socket;
 
-	constructor(db:DB){
+	constructor(db:DB, socket?:typeof Socket){
 		this.db = db;
+		this.socket = socket
 	};
 
 	init = async() => {
