@@ -1,14 +1,19 @@
-import { spawn } from "node:child_process";
+import { build } from "../app.ts";
 
-// spawn a child thread when main thread is closed
-// child thread will then accept the data from the server socket
-// where the data is then written to sqlite
-// once main thread is spun back up terminate child 
 
-const child = spawn(process.execPath, [""], {
-	detached:true,
-	stdio:["ignore"],
-});
+try{
+	/*
+	 * WHAT WILL HAPPEN 
+	 *
+	 * build database. If database is already instantiated it'll be reused
+	 * create instance of db methods
+	 * create log instance 
+	 * create socket
+	 *
+	* */
 
-child.unref();
-
+	await build();
+}catch(e){
+	console.error("FAILED. Child process creation failed.");
+	process.exit(0);
+}
