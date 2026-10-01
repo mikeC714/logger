@@ -3,7 +3,7 @@ import { getLogs } from "./test/utils/logs.ts";
 import { testFunc } from "./test/utils/init.ts";
 import { build } from "./app.ts";
 import { spawnChild } from "./child/child.ts";
-import { readFileSync } from "node:fs";
+import { readFileSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import os from "node:os";
 
@@ -14,10 +14,16 @@ const execPath = join(import.meta.dir, "/child/child.ts");
 const pidPath = join(import.meta.dir, "./child/child.pid");
 
 async function main(){
-	let pid:string | number;
+
+	// obtain pid (PROCESS ID) from file
+	// if value is returned it means child is still active
+	// kill child
+	// then delete pid file
+	// once child is killed the main process can safely be spawned
 	try{
-		 pid = readFileSync(pidPath, "utf8");
+		 let pid = readFileSync(pidPath, "utf8");
 		 if(pid) process.kill(Number(pid), "SIGTERM"); 
+		 unlinkSync(pidPath);
 	}catch{ }
 
 	const { database, log } = await build(); 
