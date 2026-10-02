@@ -3,7 +3,9 @@ dotenv.config();
 import { date } from "./utils/date.ts";
 import { build } from "./app.ts";
 
+
 const server = await build();
+
 try{
 	await server.listen({ port: Number(process.env.PORT), host:"localhost"})
 }catch(e:any){

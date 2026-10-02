@@ -1,20 +1,19 @@
 export const LOG_SCHEMA = {
 	description: "Log funnel from sdk to socket",
 	body:{
-		type:"array",
-		minItems:2,
-		maxItems:2,
-		items:[
-			{ type:"string" },
-			{ 
+		type:"object",
+		required:["key", "logs"],
+		properties:{
+			key:{ type:"string" },
+			logs:{ 
 				type:"array",
 				items:{
 					type:"object",
 					required:["lvl", "msg", "meta"],
 					properties:{
-						lvl:{ type:"string" },
+						lvl: { type:"string" },
 						msg:{ type:"string" },
-						meta:{
+						meta:{ 
 							type:"object",
 							properties:{
 								userId:{ type:"string" },
@@ -28,9 +27,9 @@ export const LOG_SCHEMA = {
 							}
 						}
 					}
-				}	
-			}
-		],
+				}
+			},
+		},
 	},
 	response: {
 		201: {

@@ -1,6 +1,17 @@
 import fp from "fastify-plugin";
 import { date } from "../../utils/date.ts";
 import { Server } from "socket.io";
+import type { FastifyInstance } from "fastify";
+
+
+async function joinRoom(clientSocket:any, projectKey:string, fastify:FastifyInstance){
+	try{
+		await clientSocket.join(projectKey)
+		fastify.log.info(`Socket:${clientSocket.id} joined room: ${projectKey}`);
+	}catch(e){
+		fastify.log.error(`Join failed for:${clientSocket.id}, ${e}`);
+	}
+}
 
 function ws_plugin(fastify:any, opts:{}){
 	const io = new Server(fastify.server, {
@@ -23,33 +34,37 @@ function ws_plugin(fastify:any, opts:{}){
 		next();
 	});
 
-	io.on("connect", (socket) => {
-		const { projectKey, key } = socket.handshake.auth;
+	io.on("connect", async(socket:any) => {
+		const { key, projectKey } = socket.handshake.auth;
+
+		// sockets can buffer connection
+		// with socket.io it handles auto reconnect for you
+		// but if the socket wasn't able to reconnect within a specific time period (configured on the client side)
+		// a new room session is instantiated
+		if(!socket.recovered){
+			await joinRoom(socket, projectKey, fastify);
+		}
+
+		// verify secret this socket belongs to the application
 		if(!key){
 			socket.disconnect(true);
 			return;
 		};
-	
-		fastify.log.info(`${date} Socket: ${socket.id} connected to project: ${key}`);
+
+		fastify.log.info(`${date} Socket: ${socket.id} connected to server`);
 
 		socket.emit("connected", true);
-		socket.on("join_room", async(pKey:string, fn:(ack:{ ok:boolean, key:string })=>void) => {
 
-			try{
-				await socket.join(pKey);
-
-				fastify.log.info(`Socket:${socket.id} joined room: ${pKey}`);
-
-				fn({ ok:true, key:pKey });
-			}catch(e:any){
-				fastify.log.error(`Join failed for:${socket.id}, ${e}`);
-				fn({ ok:false, key:projectKey });
-			}	
-		})
+		// check if there is a room with the given projectKey
+		// if not create one
+		// if there is continue
+		if(!socket.rooms.has(projectKey)){
+			await joinRoom(socket, projectKey, fastify)
+		} 
 
 		socket.on("disconnect", async(reason:any):Promise<void> => {
 			fastify.log.info(`Socket:${socket.id} disconnected:${reason}`);
-			socket.leave(projectKey);
+			socket.leave(socket.pKey);
 		})
 	});
 

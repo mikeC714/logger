@@ -1,9 +1,7 @@
 import { Server } from "socket.io";
 import { date } from "../utils/date.ts";
 import type { MSG_DATA } from "../types/msgData.d.ts";
-import type { JSON } from "../api/types/json.d.ts";
 import type { FastifyBaseLogger } from "fastify";
-
 
 export class SocketService{
 	socket:Server;
@@ -13,19 +11,20 @@ export class SocketService{
 		this.log = log;
 	}
 
-	public writeToClient = async(body:JSON<[projectKey:string, logs:Array<MSG_DATA>]>):Promise<void> => {
-		const [projectKey, _] = body;
-		if(!projectKey){
+	public writeToClient = async(body:{key:string, logs:Array<MSG_DATA>}):Promise<void> => {
+		const { key } = body;
+		if(!key|| key === undefined){
 			console.error("Failed to provide projectKey. Cannot send to room without projectKey");
+			return;
 		}; 
 		try{
-			this.socket.to(projectKey as string).emit("msg", body);
+			this.socket.to(key).emit("msg", body);
 		}catch(e:any){
-			console.error("Failed to emit to room", projectKey, e);
-			this.log.error(`Failed to write to socket:${projectKey}, time:${date}, error:${e.message}`);
+			console.error("Failed to emit to room", key, e);
+			this.log.error(`Failed to write to socket:${key}, time:${date}, error:${e.message}`);
 		};
 	}
-}
+};
 
 
 

@@ -26,7 +26,7 @@ export async function err_plugin(fastify:any, opts:{}){
 		}
 
 		fastify.log.error(`${date} Server Failure:${err.message}`);		
-		return rep.status(500).send({ error: "Internal Server Error" });
+		return rep.status(500).send({ error: "Internal Server Error", msg:err });
 	})
 }
 export const ERR_PLUGIN = fp(err_plugin); 
