@@ -6,8 +6,6 @@ import { writeFileSync } from "node:fs";
 // where the data is then written to sqlite
 // once main thread is spun back up terminate child 
 
-
-
 export function spawnChild(execPath:string, pidPath:string){
 	const child = Bun.spawn([process.execPath, execPath], {
 		detached:true,

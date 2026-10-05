@@ -1,12 +1,12 @@
 import { io } from "socket.io-client";
-import { Log } from "../app/log.ts";
-import type { MSG_DATA } from "../types/msgData.d.ts";
 
 
-export async function Socket(log:Log){
+export async function Socket(userKey:string){
+
 	//change to host 
 	const socket = io(process.env.SERVER,{
 		auth:{
+			userKey,	
 			key:process.env.SOCKET_KEY,
 		},
 		autoConnect:true,
@@ -17,9 +17,8 @@ export async function Socket(log:Log){
 		timeout:1000
 	});
 
-	socket.off("msg")
-	socket.on("connect", () => {
-		console.log("Connected.");
+	socket.on("connected", (bool:boolean) => {
+		console.log(`Connected:${bool}.`);
 	});
 	socket.on("disconnect", (reason) => {
 		console.log("Disconnected");
@@ -29,9 +28,6 @@ export async function Socket(log:Log){
 	});
 	socket.on("reconnection_attempt", (attempt) => {
 		console.log(`Reconnecting: ${attempt}`);
-	});
-	socket.on("msg", (data:MSG_DATA) => {
-		log.write(data);	
 	});
 
 	return socket;

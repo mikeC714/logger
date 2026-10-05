@@ -4,7 +4,7 @@ import { Database } from "bun:sqlite";
 // BEFORE CREATING THE DB INSTANCE:
 // CHECK IF THE PATH DIR WAS INSTANTIATED (existsSync)
 export async function initDB(){
-	const db = new Database(":memory:", {
+	const db = new Database("db.sqlite", {
 		strict:true,
 		create:true,
 		readwrite:true
@@ -17,7 +17,13 @@ export async function initDB(){
 				secret TEXT NOT NULL,
 				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 			)`
-		  );
+	);
+	db.run(`
+		   CREATE TABLE IF NOT EXISTS boss(
+				user TEXT PRIMARY KEY,
+				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+			)`
+	);
 	db.run(`
 	   CREATE TABLE IF NOT EXISTS logs (
 		   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),

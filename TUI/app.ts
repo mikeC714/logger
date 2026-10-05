@@ -1,7 +1,12 @@
+import { buildTUI } from "./interface/main.ts";
 import { initDB } from "./config/db.config.ts";
 import { Socket } from "./config/socket.config.ts";
 import { DB } from "./app/db.ts";
 import { Log } from "./app/log.ts";
+import { userInfo } from "node:os";
+import type { MSG_DATA } from "./types/msgData.d.ts";
+// import { getLogs } from "./test/utils/logs.ts";
+// import { testFunc } from "./test/utils/init.ts";
 
 export async function build(){
 	try{
@@ -11,17 +16,32 @@ export async function build(){
 		const database = await initDB();
 		const db = new DB(database); 
 
+		const username = userInfo().username;
+		
+
+		 let user = await db.getUser(username);	
+		
+		if(user === null){
+			 const newUser  = await db.createUser(username);
+			 user = newUser.user 
+		};
+
 		// create instance of log method class
 		const log = new Log(db);
 		await log.init();
 
 		// build socket
-		await Socket(log);
+		const socket = await Socket(user);
 
-		return { 
-			database, 
-			log
-		};
+		const { main, destroy } = await buildTUI(log);
+
+		socket.on("msg", (body:MSG_DATA) => {
+			log.write(body);	
+			console.log("WROTE LOG")
+			main.requestRender();
+		});
+
+		return destroy;
 
 	}catch(e){
 		throw e;

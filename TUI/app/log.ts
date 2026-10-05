@@ -13,15 +13,12 @@ export class Log {
 
 	init = async() => {
 		try{
-			console.log("HIT INIT")
 			const rows = this.db.getAllKeysNSecrets();
-			console.log(rows);
 			if(rows === undefined) return;
 
 			for(const row of rows){
 				this.LogKeys.set(row.project_key, row.secret);
 			}
-			console.log("FINISHED INIT")
 		}catch(e){
 			console.error("FAILURE. Failed to init log keys");	
 			process.exit(1);
@@ -79,11 +76,11 @@ export class Log {
 
 	// WRITE TO LOG
 	write = async(data:MSG_DATA) => {
-		const [projectKey, logs] = data;
+		const { key, logs } = data;
 		try{
-			await this.db.write(projectKey, logs);
+			await this.db.write(key, logs);
 		}catch(e){
-			console.error(`FAILURE. Failed to delete log: ${projectKey}`);	
+			console.error(`FAILURE. Failed to write log: ${key}`);	
 			process.exit(1);
 		}
 	};

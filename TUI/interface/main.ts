@@ -8,6 +8,7 @@ export async function buildTUI(log:Log) {
 	const main = await createCliRenderer({ ...CONFIG });
 	const { show } = App(main, log);
 	return {
+		main,
 		show,
 		destroy: () => main.destroy()
 	}

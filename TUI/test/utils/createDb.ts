@@ -12,6 +12,12 @@ export function createDB():Database{
 				)`
 			  );
 		db.run(`
+			   CREATE TABLE IF NOT EXISTS boss(
+					user TEXT PRIMARY KEY,
+					created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+				)`
+			  );
+		db.run(`
 		   CREATE TABLE IF NOT EXISTS logs (
 			   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
 			   project_key TEXT,

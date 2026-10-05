@@ -1,6 +1,11 @@
 import { Database } from "bun:sqlite";
 import type { MSG } from "../types/msgData.d.ts";
 
+
+type USER = {
+	user:string;
+	newUser:string;
+}
 export class DB{
 	private limit:number = 40;
 	private db:Database;
@@ -9,6 +14,41 @@ export class DB{
 		this.db = db;
 	}
 
+	getUser = async(username:string) => {
+		try{
+			const row = this.db.query<USER, [string]>("SELECT user FROM boss WHERE user = ?").get(username);
+
+			if(!row){
+				return null;
+			};
+			if(!(await Bun.password.verify(username, row.user))) throw new Error("User not found");
+
+			const { user } = row;
+
+			return user;
+		}catch(e){
+			console.error(e);
+			throw e;
+		}		
+	};
+
+	createUser = async(user:string) => {
+		try{
+			const hash = await Bun.password.hash(user,{
+				algorithm:"bcrypt",
+				cost:10
+			});
+
+			const row = this.db.query<USER, {user:string}>("INSERT INTO boss (user) VALUES($user) RETURNING *").get({user: hash});
+			
+			if(!row) throw new Error("Failed to create user");
+
+			return row;
+		}catch(e){
+			console.error(e);
+			throw e;
+		}
+	};
 
 	// CREATING
 	// RECIEVING 
@@ -98,16 +138,18 @@ export class DB{
 	write = async(key:string, logs:Array<MSG>):Promise<boolean> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta) VALUES (?,?,?,?)");
 		try{
+
 			this.db.transaction(() => {
 				for(const log of logs){
-					queryInsert.run({
-						project_key:key,
-						level:log.lvl,
-						msg:log.msg,
-						meta:JSON.stringify(log.meta)
-					});
+					queryInsert.run(
+						key,
+						log.lvl,
+						log.msg,
+						JSON.stringify(log.meta)
+					);
 				}
-			});
+			})();
+
 			return true;
 		}catch(e){
 			console.error("FAILURE:", e);

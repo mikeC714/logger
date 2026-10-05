@@ -35,10 +35,10 @@ type MSG = {
 	msg:string;
 	meta?:typeof META_BODY;
 };
-type MSG_DATA = [ 
-	projectKey:string,
+type MSG_DATA = {
+	key:string,
 	logs:Array<MSG>,
-];
+};
 
 
 export { META_BODY, LEVELS, MSG, MSG_DATA };
