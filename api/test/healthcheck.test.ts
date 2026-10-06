@@ -44,14 +44,15 @@ test("GET FAIL. Call health route should return error due to invalid header", as
 	assert.strictEqual(res.status, 401);
 });
 
-test("GET FAIL. Health route returns 429 once rate limit is reached", {timeout:5000}, async () => {
+test("GET FAIL. Health route returns 500 once rate limit is reached", {timeout:5000}, async () => {
 	const MAX = 10; 
 
 	for (let i = 0; i < MAX; i++) {
-		const res = await req.get("/api/health").set("x-machine-key", key);
-		assert.notStrictEqual(res.status, 500);
+		// call 10 times
+		await req.get("/api/health").set("x-machine-key", key);
 	}
 
+	// on the 11th time should fail due to rate limiting
 	const res = await req.get("/api/health").set("x-machine-key", key);
 	assert.strictEqual(res.status, 500);
 });

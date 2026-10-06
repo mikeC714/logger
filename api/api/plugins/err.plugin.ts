@@ -25,7 +25,7 @@ export async function err_plugin(fastify:any, opts:{}){
 				message: err.message 
 			});
 		}else if(err instanceof AuthError){
-			return rep.status(err.statusCode);
+			return rep.status(err.statusCode).send();
 		}
 
 		fastify.log.error(`${date} Server Failure:${err.message}`);		
