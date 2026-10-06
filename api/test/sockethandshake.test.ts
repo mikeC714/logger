@@ -1,7 +1,7 @@
 import {before, after, test} from "node:test";
 import assert from "node:assert";
-import { build } from ".././../../app.ts";
-import {buildSocket } from "../mocks.ts";
+import { build } from "../app.ts";
+import { buildSocket } from "./mocks/socket.ts";
 
 /**
  *  TEST WILL INCLUDE: 

@@ -16,6 +16,7 @@ type NOTI = {
 
 let LEVELS:any = ["info","warn","error","fatal","debug",];
 const CONFIG = {
+	userKey:"",
 	projectKey:"",
 	notifications:{
 		send:false,
@@ -28,9 +29,9 @@ const CONFIG = {
 
 export class Logger{
 	// change to host 
-	readonly server:string = process.env.SERVER as string;
-	readonly batchLimit:number = 20;
-	readonly timeLimit:number = 5000;
+	private server:string = process.env.SERVER as string;
+	private batchLimit:number = 20;
+	private timeLimit:number = 5000;
 	private timer:any = null;
 	private batch:Array<object> = []; 
 	config:typeof CONFIG;
@@ -89,7 +90,7 @@ export class Logger{
 				headers:{
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({key:this.config.projectKey, logs:this.batch})
+				body: JSON.stringify({key:this.config.userKey, projectKey:this.config.projectKey, logs:this.batch})
 			}).then(res => res.json());	
 
 			if(res.ok !== true){

@@ -2,6 +2,7 @@ import fp from "fastify-plugin";
 import { date } from "../../utils/date.ts";
 import { AppError } from "../errors/app.err.ts";
 import { LogError } from "../errors/log.err.ts";
+import { AuthError } from "../errors/auth.err.ts";
 import type { FastifyReply, FastifyRequest, FastifyError } from "fastify"; 
 
 export async function err_plugin(fastify:any, opts:{}){
@@ -23,6 +24,8 @@ export async function err_plugin(fastify:any, opts:{}){
 				ok:false, 
 				message: err.message 
 			});
+		}else if(err instanceof AuthError){
+			return rep.status(err.statusCode);
 		}
 
 		fastify.log.error(`${date} Server Failure:${err.message}`);		

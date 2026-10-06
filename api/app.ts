@@ -1,8 +1,10 @@
 import "dotenv/config";
 import fastify from "fastify";
+import fastifyRateLimit from "@fastify/rate-limit";
 import { ERR_PLUGIN } from "./api/plugins/err.plugin.ts";
 import { SOCKET_PLUGIN } from "./api/plugins/ws.plugin.ts";
 import { logRoutes } from "./api/module/log.routes.ts"
+import { healthRoutes } from "./api/module/health.routes.ts";
 import { sendLog } from "./lib/sendLog.ts";
 import type { SERVER_LOG } from "./types/log.d.ts";
 
@@ -36,7 +38,12 @@ const stream = {
 export async function build(opts={}){
 	const app = fastify({ logger:{ stream }, ...opts });
 	app.register(ERR_PLUGIN);
+	await app.register(fastifyRateLimit, {
+		max:100,
+		timeWindow:"2 minutes"
+	});
 	await app.register(SOCKET_PLUGIN);
 	await app.register(logRoutes, { prefix: "/api" });
+	await app.register(healthRoutes, { prefix:"/api" })
 	return app;
 }

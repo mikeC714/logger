@@ -2,9 +2,10 @@ export const LOG_SCHEMA = {
 	description: "Log funnel from sdk to socket",
 	body:{
 		type:"object",
-		required:["key", "logs"],
+		required:["key", "projectKey", "logs"],
 		properties:{
 			key:{ type:"string" },
+			projectKey:{ type:"string" },
 			logs:{ 
 				type:"array",
 				items:{
