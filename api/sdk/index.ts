@@ -1,3 +1,6 @@
+import { encrypt } from "../lib/encrypt.ts";
+
+
 type NOTI = {
 	send:boolean;
 	recipient:string;
@@ -85,12 +88,14 @@ export class Logger{
 
 	private flush = async() => {
 		try{
+			const key = await encrypt(this.config.userKey);
+
 			const res:any = await fetch(this.server,{
 				method:"POST",
 				headers:{
 					"Content-Type": "application/json"
 				},
-				body: JSON.stringify({key:this.config.userKey, projectKey:this.config.projectKey, logs:this.batch})
+				body: JSON.stringify({key, projectKey:this.config.projectKey, logs:this.batch})
 			}).then(res => res.json());	
 
 			if(res.ok !== true){
