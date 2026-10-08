@@ -6,4 +6,4 @@ export class LogError extends Error{
 		this.statusCode = statusCode;
 		this.code = code;
 	}
-}
+};

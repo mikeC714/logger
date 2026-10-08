@@ -2,11 +2,10 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { healthSchema } from "./health.schema.ts";
 import { AuthError } from "../errors/auth.err.ts";
 import { AppError } from "../errors/app.err.ts";
+import { decrypt } from "../../lib/decrypt.ts";
 
 
-interface HEADERS{
-	"x-machine-key":string
-};
+interface HEADERS{ "x-machine-key":string };
 
 export function healthRoutes(fastify:FastifyInstance){
 
@@ -27,13 +26,15 @@ export function healthRoutes(fastify:FastifyInstance){
 				throw new AuthError("Failed to provide valid headers", 400);
 			};
 
+			const decrypted = await decrypt(machine);
+
 			// decrypt headers
 
 			let validMachines = process.env.MACHINES;
 			if(validMachines === undefined) throw new AppError("Failed to instantiate valid machines for health route", 500);
 
 			validMachines = JSON.parse(validMachines);
-			if(!validMachines?.includes(machine)){
+			if(!validMachines?.includes(decrypted)){
 				fastify.log.warn(`${req.ip} attempted to make a request with invalid machine`);				
 				throw new AuthError("Invalid machine", 401);
 			};

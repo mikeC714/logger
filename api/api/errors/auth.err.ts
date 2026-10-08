@@ -6,4 +6,4 @@ export class AuthError extends Error{
 		this.statusCode = statusCode;
 		this.code = code;
 	}
-}
+};
