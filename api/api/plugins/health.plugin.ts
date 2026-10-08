@@ -3,14 +3,12 @@ import type { FastifyInstance } from "fastify";
 
 export async function CHECK_HEALTH_INTERVAL(fastify:FastifyInstance, opts:any = {}){
 	let ALIVE = true;
-	const SECRET = process.env.MACHINE_SECRET;
-	let machines = process.env.MACHINES;
-	machines = JSON.parse(machines!);
+	const appKey = process.env.APP_KEY;
+	// encrypt appKey
+	let machine = process.env.LOG_MACHINE;
 
 	while(ALIVE){
-		for(const [key, value] of Object.entries(machines!)){
-			callHealthCheck(key, value, SECRET!, fastify);
-		};
+		callHealthCheck(machine! value, appKey!, fastify);
 	}
 
 	fastify.addHook("onClose", async() => {

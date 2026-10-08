@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 
 
-export function callHealthCheck(machineName:string, machine:string, machineKey:string, fastify:FastifyInstance, retries = 3){
+export function callHealthCheck( machine:string, machineKey:string, fastify:FastifyInstance, retries = 3){
 	setInterval(async() => {
 		const date = new Date(Date.now()).toISOString().split("T").join(" ");
 		try{
