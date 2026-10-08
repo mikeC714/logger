@@ -20,15 +20,7 @@ const stream = {
 			  time: new Date(line.time).toISOString().split("T").join(" "),
 			});
 
-
-			// TODO //
-			//////////
-			//
-			// uncomment when server is configured
-			//
-			// await sendLog(entry);
-
-
+			await sendLog(entry);
 			process.stdout.write(entry + "\n");
 		} catch (e) {
 			process.stderr.write(`log error: ${String(e)}\n`);

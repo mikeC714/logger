@@ -1,10 +1,21 @@
 import { BoxRenderable, ScrollBoxRenderable, TextTableRenderable, fg } from "@opentui/core";
 import { PALETTE } from "../palette.ts";
-import { LOG_COLUMNS } from "../../app/log.ts";
 import type { LOG_ENTRY } from "../../types/log.d.ts"
 
+
+export const LOG_COLUMNS = ["Timestamp", "Message"] as const;
+
+function center(text: string, width?: number) {
+	const total = Math.max(0, width! - text.length);
+	const left = Math.floor(total / 2);
+	return " ".repeat(left) + text + " ".repeat(total - left);
+}
+
 function headerRow() {
-	return LOG_COLUMNS.map((col:any) => [fg(PALETTE.text)(col)]);
+	return [
+		[fg(PALETTE.text)(center("Timestamp", 60))],
+		[fg(PALETTE.text)(center("Message", 180))],
+	];
 };
 
 function levelColor(level:string){
@@ -26,14 +37,22 @@ function levelColor(level:string){
 	};
 }
 
+
+function formatMeta(meta?: Record<string, unknown>) {
+	if (!meta) return "";
+	return Object.entries(meta)
+		.map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v) : v}`)
+		.join("  ");
+}
+
 function dataRow(entry:any) {
+	const meta = formatMeta(entry.meta);
 	return [
 		[fg(PALETTE.text)(entry.created_at)],
-		[fg(levelColor(entry?.level))(entry.msg)],
-		[fg(PALETTE.text)(Object.entries(entry.meta)
-						 .map(([k, v]) => `${k} : ${v}`)
-						 .join(" ")
-		)],
+		[
+			fg(levelColor(entry.level))(entry.msg),
+			...(meta ? [fg(PALETTE.text)(`  ${meta}`)] : []),
+		],
 	];
 }
 
@@ -67,6 +86,9 @@ export function Body(main: any) {
 		outerBorder: false,
 		selectable: false,
 		borderColor: PALETTE.border,
+		wrapMode: "word",           
+		columnFitter: "balanced",   
+		columnWidthMode: "content",
 		content: [headerRow()],
 	});
 
