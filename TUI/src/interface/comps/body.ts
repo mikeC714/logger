@@ -57,6 +57,8 @@ function dataRow(entry:any) {
 }
 
 export function Body(main: any) {
+	let unhidden = false;
+
 	const container = new BoxRenderable(main, {
 		id: "body",
 		flexGrow: 1,
@@ -95,13 +97,23 @@ export function Body(main: any) {
 	scrollBox.content.add(table);
 	container.add(scrollBox);
 
-	function showLog(projectKey: string, entries: Array<LOG_ENTRY>) {
+	function showLog(projectKey: string, entries: Array<LOG_ENTRY>){
 		container.title = `${projectKey}: recent entries (${entries.length})`;
 		table.content = [headerRow(), ...entries.map((entry) => dataRow(entry))];
 		scrollBox.scrollTop = 0;
 	};
-	function unhide(secret:string){
-		container.title = `${secret}`;
+		
+	function showRecentEntries(projectKey:string, entries:Array<LOG_ENTRY>){
+		container.title = `${projectKey}: recent entries (${entries.length})`
+	}
+
+	function unhide(user:string, projectKey:string, entries:Array<LOG_ENTRY>){
+		unhidden = !unhidden;
+		if(unhidden){
+			container.title = `${user}`;
+		}else{
+			showRecentEntries(projectKey, entries)		
+		}
 	}
 
 	function showEmpty() {
@@ -109,5 +121,5 @@ export function Body(main: any) {
 		table.content = [];
 	};
 
-	return { body:container, unhide, showLog, showEmpty };
+	return { body:container, unhide, showRecentEntries, showLog, showEmpty };
 }

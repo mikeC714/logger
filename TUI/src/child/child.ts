@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { writeFileSync, unlinkSync } from "node:fs";
 
 
 /// spawn a child thread when main thread is closed
@@ -10,6 +10,14 @@ export function spawnChild(execPath:string, pidPath:string){
 	const child = Bun.spawn([process.execPath, execPath], {
 		detached:true,
 		stdio:["ignore", "ignore", "ignore"],
+		env:{ ...process.env },
+		onExit(){
+			try{
+				unlinkSync(pidPath);
+			}catch(e){
+				throw e;
+			}
+		}
 	});
 
 	child.unref();
@@ -17,10 +25,9 @@ export function spawnChild(execPath:string, pidPath:string){
 	try{
 		writeFileSync(pidPath, String(child?.pid));
 	}catch(e){
-
+		throw e;
 	}
-	
 
 	return child;
-}
+};
 

@@ -16,9 +16,10 @@ const HINTS:MAIN_HINTS = {
 
 type HomeCallbacks = { onOpen: (projectKey:string) => void }
 
-export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
+export function HomePage(main:any, log:Log, user:string, { onOpen }: HomeCallbacks) {
 	let currentQuery = "";
 	let currHovered = "";
+	let currEntries:Array<string | any> = [];
 	let active = true;
 
 	const mainContent = new BoxRenderable(main, {
@@ -46,7 +47,7 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 		}
 	);
 
-	const { body, unhide, showLog, showEmpty } = Body(main);
+	const { body, unhide, showRecentEntries, showLog, showEmpty } = Body(main);
 	const { footer, showWarnErrorCount, setMode: setFooterMode } = Footer(main, HINTS);
 	const { input, open, isOpen, close, cancel } = Overlay(main, {
 		onSubmit: (mode, value) => {
@@ -61,7 +62,10 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 			showEmpty();
 			return;
 		};
-		log.preview(projectKey).then((entries:any) => showLog(projectKey, entries));
+		log.preview(projectKey).then((entries:any) => {
+			currEntries = entries;
+			showLog(projectKey, entries)
+		});
 		log.getLogErrorAndWarnCount(projectKey).then((count:any) => showWarnErrorCount(count));	
 	};
 
@@ -103,7 +107,7 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 				returnToNormal();
 			break;
 		}
-	}
+	}	
 
 	function openCreate() {
 		setFooterMode("create");
@@ -139,7 +143,7 @@ export function HomePage(main:any, log:Log, { onOpen }: HomeCallbacks) {
 				key.preventDefault();
 			break;
 			case "h":
-				unhide(currHovered);
+				 unhide(user, currHovered, currEntries);
 				key.preventDefault();
 			break;
 			case "r": 

@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "srcDir":"./src",
+    "outDir": "./dist",
+
     // Environment setup & latest features
     "lib": ["EsNext"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
     "allowJs": true,
     "types": ["bun"],
 

@@ -1,13 +1,13 @@
 {
-  "name": "client",
-  "module": "main.ts",
+  "name": "TUI",
+  "module": "./src/main.ts",
   "type": "module",
   "bin": {
     "tlog": "./dist/main.js"
   },
   "private": true,
   "scripts": {
-    "dev": "bun run --watch main.ts",
+    "dev": "bun run --watch ./src/main.ts",
     "test": "bun test --env-file=.env"
   },
   "devDependencies": {
@@ -21,8 +21,6 @@
   },
   "dependencies": {
     "@opentui/core": "^0.4.5",
-    "csv-parser": "^3.2.1",
-    "ioredis": "^5.11.1",
     "socket.io-client": "^4.8.3"
   }
 }

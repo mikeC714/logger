@@ -9,9 +9,11 @@ type USER = {
 export class DB{
 	private limit:number = 40;
 	private db:Database;
+	public user:string; 
 
 	constructor(db:Database){
 		this.db = db;
+		this.user = "";
 	}
 
 	getUser = async(username:string) => {
@@ -25,6 +27,7 @@ export class DB{
 
 			const { user } = row;
 
+			this.user = user;
 			return user;
 		}catch(e){
 			console.error(e);

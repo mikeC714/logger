@@ -4,9 +4,9 @@ import { App } from "./app.ts";
 import { Log } from "../app/log.ts";
 
 
-export async function buildTUI(log:Log) {
+export async function buildTUI(log:Log, user:string) {
 	const main = await createCliRenderer({ ...CONFIG });
-	const { show } = App(main, log);
+	const { show } = App(main, log, user);
 	return {
 		main,
 		show,

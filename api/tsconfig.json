@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist",
 
-	"allowImportingTsExtensions":true,
+    "allowImportingTsExtensions":true,
     "module": "nodenext",
     "target": "esnext",
     "types": ["node"],
