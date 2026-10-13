@@ -1,0 +1,22 @@
+{
+  "name": "@tlog",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.ts",
+  "module": "./dist/index.d.js",
+  "types": "./dist/index.d.ts",
+  "exports":{
+	".":{
+		"types":"./dist/index.d.ts",
+		"import":"./dist/index.js"
+	}
+  },
+  "files":["dist"],
+  "scripts": {
+	  "build":,
+	  "prepublish":
+  },
+  "devDependencies": {
+	  "@logger/shared": "*"
+  }
+}

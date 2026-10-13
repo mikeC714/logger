@@ -1,0 +1,31 @@
+{
+  "name": "tlog",
+  "version": "1.0.0",
+  "private": true,
+  "type":"module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @tlog/api",
+    "dev:tui": "npm run dev -w @tlog/tui",
+    "dev:sdk": "npm run dev -w @tlog",
+    "test": "npm test --workspaces --if-present"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikeC714/logger.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mikeC714/logger/issues"
+  },
+  "homepage": "https://github.com/mikeC714/logger#readme",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}
