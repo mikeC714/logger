@@ -15,5 +15,8 @@
   "scripts": {
   },
   "devDependencies": {
+  },
+  "dependencies":{
+	  "@tlog/lib":"*"
   }
 }

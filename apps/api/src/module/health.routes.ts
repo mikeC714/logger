@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { healthSchema } from "./health.schema.ts";
 import { AuthError } from "../errors/auth.err.ts";
 import { AppError } from "../errors/app.err.ts";
-import { decrypt } from "../../lib/decrypt.ts";
+import { decrypt } from "@tlog/lib";
 
 
 interface HEADERS{ "x-machine-key":string };
