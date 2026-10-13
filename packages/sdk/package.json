@@ -1,5 +1,5 @@
 {
-  "name": "@tlog",
+  "name": "@tlog/logger",
   "version": "1.0.0",
   "type": "module",
   "main": "./dist/index.ts",
@@ -13,10 +13,7 @@
   },
   "files":["dist"],
   "scripts": {
-	  "build":,
-	  "prepublish":
   },
   "devDependencies": {
-	  "@logger/shared": "*"
   }
 }

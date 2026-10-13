@@ -10,7 +10,7 @@
   "scripts": {
     "dev:api": "npm run dev -w @tlog/api",
     "dev:tui": "npm run dev -w @tlog/tui",
-    "dev:sdk": "npm run dev -w @tlog",
+    "dev:sdk": "npm run dev -w @tlog/logger",
     "test": "npm test --workspaces --if-present"
   },
   "repository": {
