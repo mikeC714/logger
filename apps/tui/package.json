@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD:apps/tui/package.json
   "name": "@tlog/tui",
   "private":true,
+=======
+  "name": "TUI",
+  "module": "./src/main.ts",
+>>>>>>> 2675e36371442091d89e72fd7a0bf576a63ac0aa:TUI/package.json
   "type": "module",
   "bin": { "tlog": "./dist/main.js" },
   "scripts": {
@@ -15,7 +20,11 @@
   },
   "dependencies": {
     "@opentui/core": "^0.4.5",
+<<<<<<< HEAD:apps/tui/package.json
     "socket.io-client": "^4.8.3",
     "@logger/shared": "*"
+=======
+    "socket.io-client": "^4.8.3"
+>>>>>>> 2675e36371442091d89e72fd7a0bf576a63ac0aa:TUI/package.json
   }
 }
