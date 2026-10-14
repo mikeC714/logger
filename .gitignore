@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build Output
+dist/
+*.tsbuildinfo
+
+# Enviroment
+.env
+.env.*
+!.env.example
+
+
+# SERVER ONLY Encryption
+packages/lib
+
+
+
+# Package Manager
+bun.lock
+bun.lockb
+
+
+# OS
+.DS_Store
+

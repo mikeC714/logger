@@ -1,0 +1,15 @@
+{
+	"extends":"../../tsconfig.base.json",
+	"compilerOptions": {
+		"srcDir":"./src",
+		"outDir": "./dist",
+		"noEmit":true,
+		"lib": ["EsNext"],
+		"target": "ESNext",
+		"module": "Preserve",
+		"moduleDetection": "force",
+		"allowJs": true,
+		"types": ["bun"],
+		"moduleResolution": "bundler"
+	}
+}
