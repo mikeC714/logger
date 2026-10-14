@@ -21,3 +21,4 @@ export class Log{
 		return rep.code(201).send({ ok:true })
 	};
 }
+

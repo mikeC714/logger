@@ -1,15 +1,15 @@
 {
   "name": "@tlog/api",
   "version": "1.0.0",
-  "private":true,
+  "private": true,
   "description": "",
   "type": "module",
   "main": "./dist/api/server.js",
   "scripts": {
-	  "dev": "node watch src/server.ts",
-	  "build": "tsc -p tsconfig.json",
-	  "start": "node dist/server.js",
-	  "test": "node --env-file=.env --test"
+    "dev": "node watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "test": "node --env-file=.env --test"
   },
   "keywords": [],
   "author": "",
@@ -25,12 +25,10 @@
     "@fastify/error": "^4.2.0",
     "@fastify/postgres": "^6.1.0",
     "@fastify/rate-limit": "^11.2.0",
-    "@fastify/redis": "^8.0.0",
     "@node-cron/fastify": "^0.1.0",
     "bcrypt": "^6.0.0",
     "fastify": "^5.10.0",
     "fastify-plugin": "^6.0.0",
-    "ioredis": "^5.11.1",
     "pg": "^8.22.0",
     "socket.io": "^4.8.3",
     "supertest": "^7.2.2"

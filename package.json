@@ -11,6 +11,7 @@
     "dev:api": "npm run dev -w @tlog/api",
     "dev:tui": "npm run dev -w @tlog/tui",
     "dev:sdk": "npm run dev -w @tlog/logger",
+    "build:all": "npx tsc -p apps/api && npx tsc -p apps/tui && npx tsc -p packages/sdk",
     "test": "npm test --workspaces --if-present"
   },
   "repository": {

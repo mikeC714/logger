@@ -20,16 +20,14 @@ async function main(){
 	// then delete pid file
 	// once child is killed the main process can safely be spawned
 	try{
-		 let pid = readFileSync(pidPath, "utf8");
+		 let pid = Number(readFileSync(pidPath, "utf8"));
 		 if(pid){
-			 process.kill(Number(pid), "SIGTERM"); 
+			 process.kill(-pid, "SIGTERM"); 
 			 unlinkSync(pidPath);
-			 process.stdout.write("DELETED CHILD");
 		 };
 	}catch(e:Error | any){
-		if(e.code !== "ESRCH" && e.code !== "ENOENT"){
-			throw e;
-		}
+		if(e.code !== "ESRCH") console.log("Child is has already been killed");
+		throw e;
 	}
 
 	 const destroy = await build(); 

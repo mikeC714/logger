@@ -50,7 +50,7 @@ export class Logger{
 		};
 	}
 
-	public log = async(options:Record<string, string | object> = { lvl:"info", msg:"", meta:META_BODY }) => {
+	public log = async(options:Record<string, string | object> = { lvl:"info", msg:"", meta:META_BODY }):Promise<void | any> => {
 		// validate the shape of the parameters
 		if(!LEVELS.includes(options.lvl)) throw new Error(`${options.lvl} parameter isn't a value for LVL: ${LEVELS}`);
 		if(Object.keys(META_BODY).every((key) => META_BODY[key] !== options[key])) throw new Error(`${JSON.stringify(options)} don't match the given fields ${JSON.stringify(META_BODY)}`); 
