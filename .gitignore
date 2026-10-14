@@ -12,8 +12,8 @@ dist/
 
 
 # SERVER ONLY Encryption
-apps/api/src/lib/encrypt.ts
-apps/api/src/lib/decrypt.ts
+packages/lib
+
 
 
 # Package Manager

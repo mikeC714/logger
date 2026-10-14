@@ -1,22 +1,10 @@
 {
-  "compilerOptions": {
-	"rootDir": "./src",
-	"outDir": "./dist",
-	"noEmit":true,
-	"module": "nodenext",
-	"target": "esnext",
-	"types": ["node"],
-	"allowImportingTsExtensions":true,
-	"rewriteRelativeImportExtensions": true,"
-
-	"sourceMap": true,
-	"declaration": true,
-	"declarationMap": true,
-	"noUncheckedIndexedAccess": true,
-	"exactOptionalPropertyTypes": true,
-	"isolatedModules": true,
-	"noUncheckedSideEffectImports": true,
-	"moduleDetection": "force",
-	"skipLibCheck": true
-  }
+	"extends":"../../tsconfig.base.json",
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"noEmit":true,
+		"module": "nodenext",
+		"target": "esnext"
+	}
 }

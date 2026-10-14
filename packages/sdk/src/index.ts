@@ -1,3 +1,5 @@
+import { encrypt } from "@tlog/lib";
+
 type NOTI = {
 	send:boolean;
 	recipient:string;

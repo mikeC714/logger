@@ -6,7 +6,7 @@ import { SOCKET_PLUGIN } from "./plugins/ws.plugin.ts";
 import { CHECK_HEALTH_INTERVAL } from "./plugins/health.plugin.ts";
 import { logRoutes } from "./module/log.routes.ts"
 import { healthRoutes } from "./module/health.routes.ts";
-import { sendLog } from "./lib/sendLog.ts";
+import { sendLog } from "@tlog/lib";
 import type { FastifyInstance } from "fastify";
 
 

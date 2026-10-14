@@ -1,6 +1,6 @@
+import { SocketService } from "../socket/ws.service.ts";
+import type { MSG_DATA } from "../types/msgData.d.ts";
 import type { FastifyRequest, FastifyReply } from "fastify"
-import type { MSG_DATA } from "../../types/msgData.d.ts";
-import { SocketService } from "../../socket/ws.service.ts";
 
 
 type REQ_BODY = { key:string, projectKey:string, logs:Array<MSG_DATA> }
