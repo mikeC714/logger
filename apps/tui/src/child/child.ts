@@ -17,13 +17,14 @@ export function spawnChild(execPath:string, pidPath:string){
 	});
 
 	try{
+		// write pid (process ID) to know what process to terminate
 		writeFileSync(pidPath, String(child?.pid));
 	}catch(e){
 		throw e;
 	}
 
+	// detach child from main process
 	child.unref();
-
 
 	return child;
 };

@@ -21,6 +21,7 @@ export async function initDB(){
 	db.run(`
 		   CREATE TABLE IF NOT EXISTS boss(
 				user TEXT PRIMARY KEY,
+				hash TEXT,
 				created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 			)`
 	);

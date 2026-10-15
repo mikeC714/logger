@@ -9,8 +9,10 @@ try{
 	 * create instance of db methods
 	 * create log instance 
 	 * create socket
+	 * with the socket built the entirety of the app is basically be functioning just without an interface
+	 * accepting msg data that'll be written to the database
 	 *
-	* */
+	**/
 
 	await build();
 }catch(e){

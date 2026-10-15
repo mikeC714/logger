@@ -4,7 +4,7 @@ import type { MSG } from "../types/msgData.d.ts";
 
 type USER = {
 	user:string;
-	newUser:string;
+	hash:string;
 }
 export class DB{
 	private limit:number = 40;
@@ -18,17 +18,18 @@ export class DB{
 
 	getUser = async(username:string) => {
 		try{
-			const row = this.db.query<USER, [string]>("SELECT user FROM boss WHERE user = ?").get(username);
+			const row = this.db.query<USER, [string]>("SELECT hash FROM boss WHERE user = ?").get(username);
+
 
 			if(!row){
 				return null;
 			};
-			if(!(await Bun.password.verify(username, row.user))) throw new Error("User not found");
+			if(!(await Bun.password.verify(username, row.hash))) throw new Error("User not found");
 
-			const { user } = row;
+			const { hash } = row;
 
-			this.user = user;
-			return user;
+			this.user = hash;
+			return hash;
 		}catch(e){
 			console.error(e);
 			throw e;
@@ -42,7 +43,7 @@ export class DB{
 				cost:10
 			});
 
-			const row = this.db.query<USER, {user:string}>("INSERT INTO boss (user) VALUES($user) RETURNING *").get({user: hash});
+			const row = this.db.query<USER, {user:string, hash:string}>("INSERT INTO boss (user, hash) VALUES($user, $hash) RETURNING *").get({user, hash});
 			
 			if(!row) throw new Error("Failed to create user");
 

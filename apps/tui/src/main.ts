@@ -1,9 +1,7 @@
 import { build } from "./app.ts";
 import { spawnChild } from "./child/child.ts";
 import { readFileSync, unlinkSync } from "node:fs";
-import { unlink } from "node:fs/promises";
 import { join } from "node:path";
-import os from "node:os";
 
 
 
@@ -22,12 +20,17 @@ async function main(){
 	try{
 		 let pid = Number(readFileSync(pidPath, "utf8"));
 		 if(pid){
+			 try{
 			 process.kill(-pid, "SIGTERM"); 
 			 unlinkSync(pidPath);
+			 }catch(e:Error | any){
+				 if(e.code === "ENOENT") console.log("There was no child"); 
+			 }
 		 };
 	}catch(e:Error | any){
-		if(e.code !== "ESRCH") console.log("Child is has already been killed");
-		throw e;
+		if( e.code === "ESRCH") console.log("Child has already been killed");
+
+		console.log(e);
 	}
 
 	 const destroy = await build(); 

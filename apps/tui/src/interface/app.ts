@@ -4,11 +4,7 @@ import { DisplayPage } from "./pages/display.ts";
 import type { Log } from "../app/log.ts";
 
 
-<<<<<<<< HEAD:apps/tui/src/interface/app.ts
 export function App(main:any, log:Log, user:string){
-========
-export function App(main:any, log:Log, user:() => Promise<string>){
->>>>>>>> 2675e36371442091d89e72fd7a0bf576a63ac0aa:TUI/src/interface/app.ts
 	const container = new BoxRenderable(main,{
 		id:"app"
 	});
