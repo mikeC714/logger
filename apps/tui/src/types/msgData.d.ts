@@ -36,7 +36,7 @@ type MSG = {
 	meta?:typeof META_BODY;
 };
 type MSG_DATA = {
-	key:string,
+	projectKey:string,
 	logs:Array<MSG>,
 };
 

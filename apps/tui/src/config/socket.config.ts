@@ -1,6 +1,5 @@
 import { io } from "socket.io-client";
 
-
 export async function Socket(userKey:string){
 
 	//change to host 
@@ -30,5 +29,6 @@ export async function Socket(userKey:string){
 		console.log(`Reconnecting: ${attempt}`);
 	});
 
+
 	return socket;
-}
+};

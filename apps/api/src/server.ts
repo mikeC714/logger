@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { date } from "./utils/date.ts";
+import { date } from "@tlog/lib";
 import { build } from "./app.ts";
 
 

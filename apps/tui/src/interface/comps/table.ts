@@ -4,8 +4,7 @@ import type { LOG_ENTRY } from "../../types/log.d.ts";
 
 
 
-export const LOG_COLUMNS = ["Timestamp", "Message"] as const;
-
+export const LOG_COLUMNS = ["Status", "Timestamp", "Message"] as const;
 
 export function LogTable(main:any, projectKey:string){
 	const container = new BoxRenderable(main, {
@@ -28,22 +27,28 @@ export function LogTable(main:any, projectKey:string){
 		scrollY: true,
 		scrollX: false,
 		stickyScroll: false,
+		flexDirection:"column",
+		alignItems:"center",
 	});
 
 	const table = new TextTableRenderable(main, {
 		id: "body-table",
 		width: "100%",
+		columnWidthMode:"content",
 		showBorders: true,
 		outerBorder: false,
 		selectable: false,
 		borderColor: PALETTE.border,
+		justifyContent:"center",
+		alignItems:"center",
 		content: [headerFormat()],
 	});
 
 	function headerFormat() {
 		return [
-			[fg(PALETTE.text)(center("Timestamp", 60))],
-			[fg(PALETTE.text)(center("Message", 180))],
+			[fg(PALETTE.text)(center("Status", 20))],
+			[fg(PALETTE.text)(center("Timestamp", 40))],
+			[fg(PALETTE.text)(center("Message", 254))],
 		];
 	};
 
@@ -67,14 +72,11 @@ export function LogTable(main:any, projectKey:string){
 
 	function dataRow(entry:any) {
 		return [
-			[fg(PALETTE.text)(entry.created_at)],
-			[fg(levelColor(entry?.level))(entry.msg)],
-			[fg(PALETTE.text)(Object.entries(entry.meta)
-							 .map(([key, value]) => `${key} : ${value}`)
-							 .join(" ")
-			)],
+			[fg(levelColor(entry?.level))(center(entry.level.toUpperCase(), 20))],
+			[fg(PALETTE.text)(center(entry.created_at, 40))],
+			[fg(PALETTE.text)(entry.msg)],
 		];
-	}
+	};
 
 	function showLog(projectKey: string, entries: Array<LOG_ENTRY>) {
 		container.title = `${projectKey}: (${entries.length})`;

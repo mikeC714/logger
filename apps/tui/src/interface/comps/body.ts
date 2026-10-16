@@ -14,8 +14,8 @@ function center(text: string, width?: number) {
 
 function headerRow() {
 	return [
-		[fg(PALETTE.text)(center("Timestamp", 60))],
-		[fg(PALETTE.text)(center("Message", 180))],
+		[fg(PALETTE.text)(center("Timestamp", 40))],
+		[fg(PALETTE.text)(center("Message", 202))],
 	];
 };
 
@@ -49,7 +49,7 @@ function formatMeta(meta?: Record<string, unknown>) {
 function dataRow(entry:any) {
 	const meta = formatMeta(entry.meta);
 	return [
-		[fg(PALETTE.text)(entry.created_at)],
+		[fg(PALETTE.text)(center(entry.created_at, 40))],
 		[
 			fg(levelColor(entry.level))(entry.msg),
 			...(meta ? [fg(PALETTE.text)(`  ${meta}`)] : []),

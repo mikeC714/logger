@@ -29,15 +29,12 @@ export async function build(){
 
 		// build socket
 		const socket = await Socket(user);
-
 		const { main, destroy } = await buildTUI(log, user);
 
 		socket.on("msg", (body:MSG_DATA) => {
 			log.write(body);	
-			console.log("WROTE LOG")
 			main.requestRender();
 		});
-
 		return destroy;
 
 	}catch(e){

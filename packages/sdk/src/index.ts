@@ -1,4 +1,4 @@
-import { encrypt } from "@tlog/lib";
+import { encrypt, apiFetch } from "@tlog/lib";
 
 type NOTI = {
 	send:boolean;

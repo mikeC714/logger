@@ -1,4 +1,4 @@
-import { callHealthCheck } from "../../lib/healthCheck.ts";
+import { callHealthCheck } from "@tlog/lib";
 import { fastifyNodeCron } from "@node-cron/fastify";
 import type { FastifyInstance } from "fastify";
 

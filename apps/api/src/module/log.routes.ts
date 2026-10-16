@@ -7,8 +7,5 @@ export async function logRoutes(fastify:FastifyInstance){
 	const socketService = new SocketService(fastify.io, fastify.log);
 	const logController = new Log(socketService);
 
-	fastify.post("/log", { 
-		config:{ rateLimit:false },
-		schema:LOG_SCHEMA 
-	}, logController.log);
-}
+	fastify.post("/log", { config:{ rateLimit:false }, schema:LOG_SCHEMA }, logController.log);
+};

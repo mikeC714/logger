@@ -76,11 +76,11 @@ export class Log {
 
 	// WRITE TO LOG
 	write = async(data:MSG_DATA) => {
-		const { key, logs } = data;
+		const { projectKey, logs } = data;
 		try{
-			await this.db.write(key, logs);
+			await this.db.write(projectKey, logs);
 		}catch(e){
-			console.error(`FAILURE. Failed to write log: ${key}`);	
+			console.error(`FAILURE. Failed to write log: ${projectKey}`);	
 			process.exit(1);
 		}
 	};

@@ -23,10 +23,8 @@ function createLogStream(getApp: () => FastifyInstance | undefined) {
 					time: new Date(line.time).toISOString().split("T").join(" "),
 				});
 
-				const app = getApp();
-				if (app) {
-					await sendLog(process.env.LOG_MACHINE!, process.env.APP_KEY!, entry, app);
-				};
+				// const app = getApp();
+				// if (app)  await sendLog(process.env.LOG_MACHINE!, process.env.APP_KEY!, entry, app);
 				process.stdout.write(entry + "\n");
 			} catch (e) {
 				process.stderr.write(`log error: ${String(e)}\n`);

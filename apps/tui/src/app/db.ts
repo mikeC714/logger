@@ -121,14 +121,17 @@ export class DB{
 		}
 	};
 
-	getWarnAndErrorCount = async(key:string) => {
+	getWarnAndErrorCount = async(key:string):Promise<{debug:number, warn:number, error:number, fatal:number} | any> => {
 		try{
 			const query = this.db.query<{ count:number }, [string, string]>("SELECT COUNT(*) AS count FROM logs WHERE project_key = ? AND level = ?");
 
+			const debugs = query.get(key, "debug");
 			const warnings = query.get(key, "warn");
-			const errors = query.get(key, "error")
+			const errors = query.get(key, "error");
 			const fatals = query.get(key, "fatal");
+
 			return{
+				debug:debugs?.count ?? 0,
 				warn:warnings?.count ?? 0,
 				error:errors?.count ?? 0,
 				fatal:fatals?.count ?? 0
@@ -141,6 +144,7 @@ export class DB{
 
 	write = async(key:string, logs:Array<MSG>):Promise<boolean> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta) VALUES (?,?,?,?)");
+		process.stdout.write(`WRITTING TO LOG: ${logs}`)
 		try{
 
 			this.db.transaction(() => {

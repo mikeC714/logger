@@ -19,21 +19,26 @@ export function Footer(main: any, hints:MAIN_HINTS | DISPLAY_HINTS | any) {
 	const hintLabel = new TextRenderable(main, { id: "footerHint", content: hints.normal, fg: PALETTE.text });
 	container.add(hintLabel)
 
+
+	const debugCounter = new TextRenderable(main, { id: "debugCount", content: "0 debugs", fg: PALETTE.msgColor.debug });
 	const fatalCounter = new TextRenderable(main, { id: "fatalCount", content: "0 fatals", fg: PALETTE.msgColor.fatal });
 	const errorCounter = new TextRenderable(main, { id: "errorCount", content: "0 errors", fg: PALETTE.msgColor.error });
 	const warnCounter = new TextRenderable(main, { id: "warnCount", content: "0 warnings", fg: PALETTE.msgColor.warn });
 	const countBox = new BoxRenderable(main, { flexDirection: "row", gap: 2 });
 
-	countBox.add(fatalCounter);
-	countBox.add(errorCounter);
+	countBox.add(debugCounter);
 	countBox.add(warnCounter);
+	countBox.add(errorCounter);
+	countBox.add(fatalCounter);
 	container.add(countBox);
 
 
 	function showWarnErrorCount(count:any){
-		errorCounter.content = `${count?.error} errors`;
+		debugCounter.content = `${count?.debug} debugs` 
 		warnCounter.content = `${count?.warn} warnings`;
+		errorCounter.content = `${count?.error} errors`;
 		fatalCounter.content = `${count?.fatal} fatals`
+
 	};
 
 	function setMode(mode:MAIN_FOOTER_MODE | DISPLAY_FOOTER_MODE | any) {

@@ -13,10 +13,7 @@ export class Log{
 
 	log = async(req:FastifyRequest<{Body:REQ_BODY}>, rep:FastifyReply) => {
 		const { key, projectKey, logs } = req.body;
-		const body = {
-			projectKey,
-			logs
-		};
+		const body = { projectKey, logs };
 		await this.socketService.writeToClient(key, body);
 		return rep.code(201).send({ ok:true })
 	};

@@ -1,5 +1,5 @@
 import fp from "fastify-plugin";
-import { date } from "../../utils/date.ts";
+import { date } from "@tlog/lib";
 import { AppError } from "../errors/app.err.ts";
 import { LogError } from "../errors/log.err.ts";
 import { AuthError } from "../errors/auth.err.ts";
