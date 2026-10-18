@@ -24,11 +24,7 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 
 	const promptText = new TextRenderable(main, { id: "overlay-prompt", content: "", fg: PALETTE.text });
 	const input = new InputRenderable(main, { id: "overlay-input", width: "100%", value: "" });
-	const hintText = new TextRenderable(main, {
-		id: "overlay-hint",
-		content: "Enter to confirm  ·  Esc to cancel",
-		fg: PALETTE.border,
-	});
+	const hintText = new TextRenderable(main, { id: "overlay-hint", content: "Enter to confirm  ·  Esc to cancel", fg: PALETTE.border });
 
 	let mode: OVERLAY_MODE | null = null;
 	let deleteTarget: string | null = null;
@@ -42,7 +38,7 @@ export function Overlay(main: any, callbacks: OVERLAY_CALLBACKS) {
 		switch (nextMode) {
 			case "create":
 				container.title = "Create log";
-				input.placeholder = "logName";
+				input.placeholder = "Enter log name";
 			break;
 			case "delete":
 				container.title = "Delete log";

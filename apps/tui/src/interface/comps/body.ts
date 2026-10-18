@@ -14,8 +14,9 @@ function center(text: string, width?: number) {
 
 function headerRow() {
 	return [
+		[fg(PALETTE.text)(center("Status", 20))],
 		[fg(PALETTE.text)(center("Timestamp", 40))],
-		[fg(PALETTE.text)(center("Message", 202))],
+		[fg(PALETTE.text)(center("Message", 180))],
 	];
 };
 

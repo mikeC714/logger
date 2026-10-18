@@ -1,12 +1,12 @@
 import "dotenv/config";
 import fastify from "fastify";
+import { sendLog } from "@tlog/lib";
 import fastifyRateLimit from "@fastify/rate-limit";
 import { ERR_PLUGIN } from "./plugins/err.plugin.ts";
 import { SOCKET_PLUGIN } from "./plugins/ws.plugin.ts";
-import { CHECK_HEALTH_INTERVAL } from "./plugins/health.plugin.ts";
-import { logRoutes } from "./module/log.routes.ts"
+import { CHECK_HEALTH_CRON } from "./plugins/health.plugin.ts";
+import { logRoutes } from "./module/log.routes.ts";
 import { healthRoutes } from "./module/health.routes.ts";
-import { sendLog } from "@tlog/lib";
 import type { FastifyInstance } from "fastify";
 
 
@@ -24,7 +24,7 @@ function createLogStream(getApp: () => FastifyInstance | undefined) {
 				});
 
 				// const app = getApp();
-				// if (app)  await sendLog(process.env.LOG_MACHINE!, process.env.APP_KEY!, entry, app);
+				// if (app) await sendLog(process.env.LOG_MACHINE!, process.env.APP_KEY!, entry, app);
 				process.stdout.write(entry + "\n");
 			} catch (e) {
 				process.stderr.write(`log error: ${String(e)}\n`);
@@ -49,7 +49,7 @@ export async function build(opts={}){
 	});
 	app.register(ERR_PLUGIN);
 	await app.register(SOCKET_PLUGIN);
-	await app.register(CHECK_HEALTH_INTERVAL);
+	await app.register(CHECK_HEALTH_CRON);
 	await app.register(logRoutes, { prefix: "/api" });
 	await app.register(healthRoutes, { prefix:"/api" })
 	return app;

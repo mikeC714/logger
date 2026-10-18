@@ -97,7 +97,7 @@ export class DB{
 	// DELETING
 	// WRITTING
 	// ALL LOG RELATED
-	getPreviewLogs = async(key:string) => {
+	getPreviewLogs = async(key:string):Promise<any> => {
 		try{
 			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ? ORDER BY rowid DESC LIMIT ?").all(key, this.limit);
 			return logs.map((log:any) => ({
@@ -109,7 +109,7 @@ export class DB{
 		}
 	};
 
-	getAllLogs = async(key:string) => {
+	getAllLogs = async(key:string):Promise<any> => {
 		try{
 			const logs = this.db.query("SELECT * FROM logs WHERE project_key = ?").all(key);
 			return logs.map((log:any) => ({

@@ -1,8 +1,5 @@
 import { Database } from "bun:sqlite";
 
-// NEED TO FIGURE OUT HOW TO DETERMINE THE PATH
-// BEFORE CREATING THE DB INSTANCE:
-// CHECK IF THE PATH DIR WAS INSTANTIATED (existsSync)
 export async function initDB(){
 	const db = new Database("db.sqlite", {
 		strict:true,

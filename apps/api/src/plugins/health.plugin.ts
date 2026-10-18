@@ -2,7 +2,7 @@ import { callHealthCheck } from "@tlog/lib";
 import { fastifyNodeCron } from "@node-cron/fastify";
 import type { FastifyInstance } from "fastify";
 
-export async function CHECK_HEALTH_INTERVAL(fastify:FastifyInstance, opts:any = {}){
+export async function CHECK_HEALTH_CRON(fastify:FastifyInstance, opts:any = {}){
 	const appKey = process.env.APP_KEY;
 	let machine = process.env.LOG_MACHINE;
 	
