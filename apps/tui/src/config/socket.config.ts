@@ -2,7 +2,6 @@ import { io } from "socket.io-client";
 
 export async function Socket(userKey:string){
 
-	//change to host 
 	const socket = io(process.env.SERVER,{
 		auth:{
 			userKey,	
