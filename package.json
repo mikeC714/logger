@@ -25,6 +25,9 @@
     "url": "https://github.com/mikeC714/logger/issues"
   },
   "homepage": "https://github.com/mikeC714/logger#readme",
+  "dependencies": {
+    "@tlog/lib":"*"
+  },
   "devDependencies": {
     "@types/node": "^26.6.5",
     "typescript": "^7.0.2"

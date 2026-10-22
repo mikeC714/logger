@@ -27,6 +27,7 @@
     "@fastify/rate-limit": "^11.2.0",
     "@node-cron/fastify": "^0.1.0",
     "bcrypt": "^6.0.0",
+    "@tlog/lib":"*",
     "fastify": "^5.10.0",
     "fastify-plugin": "^6.0.0",
     "pg": "^8.22.0",

@@ -9,8 +9,6 @@ import { logRoutes } from "./module/log.routes.ts";
 import { healthRoutes } from "./module/health.routes.ts";
 import type { FastifyInstance } from "fastify";
 
-
-
 // callback is used to be able to obtain the app instance 
 // this is due to the once the stream is being instantiated app will most likely be undefined still testing this out
 function createLogStream(getApp: () => FastifyInstance | undefined) {

@@ -1,7 +1,7 @@
 import {describe, before, after, test} from "node:test";
 import request from "supertest";
 import assert from "node:assert";
-import { build } from "../api/app.ts";
+import { build } from "../src/app.ts";
 
 
 let app:any;
