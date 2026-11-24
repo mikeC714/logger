@@ -8,7 +8,8 @@
 
 ## TECH STACK 
 
-- NodeJs/TS (Fastify)
+- NodeJs/Typescript  
+- Fastify
 - Socket.io
 - Cron
 
@@ -22,10 +23,34 @@
   (check client notes to understand how the user and log key are emitted and how they can be obtained.)
   (check sdk notes to understand how the userKey and log is implemented.)
 
-
 * Once the request is successfully sent, the request body will contain the userKey and log. The body will be funneled to the webSocket utilizing the userKey to direct which socket room the msg event will be sent to.
   The shape of the sent data will be an object ({ projectKey:string, logs:Array<object> }). 
   (check client notes to understand how the log is saved and displayed)   
+
+
+
+        POST REQUEST 
+             |
+             |  HTTP POST
+             v
+      Fastify HTTP Server
+             |
+             | Process Request
+             v
+       User Identification
+             |
+             | Resolve userKey
+             v
+       Socket.io Room
+             |
+             | Emit msg Event
+             v
+       Connected Client
+             |
+             v
+        Display Logs
+
+
 
 
 
@@ -42,7 +67,7 @@
 
 
 
-## Why Socket.io instead of raw TCP
+## Why Socket.io instead of raw TCP/WS
 
 Now the easy answer simplicity. Socket.io handles everything that I don't want to handle manually when it comes to a raw socket.
 

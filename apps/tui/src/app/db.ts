@@ -144,7 +144,6 @@ export class DB{
 
 	write = async(key:string, logs:Array<MSG>):Promise<boolean> => {
 		const queryInsert = this.db.prepare("INSERT INTO logs (project_key, level, msg, meta) VALUES (?,?,?,?)");
-		process.stdout.write(`WRITTING TO LOG: ${logs}`)
 		try{
 
 			this.db.transaction(() => {
