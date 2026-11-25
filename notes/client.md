@@ -115,6 +115,7 @@ Typically, logs are sent within batches of 20.
 
 - If stuttering / latency becomes an issue maybe a re-write in a different language may be needed (go or rust maybe)
 - Maybe create my own protocol instead of socket.io (just a thought)
+- Implement proper error handling 
 
 
 

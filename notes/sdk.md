@@ -1,4 +1,0 @@
-# SDK created with TS
-
-
-
