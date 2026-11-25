@@ -1,5 +1,5 @@
 # TLOG Client
-# The client-side application for TLog, a terminal based log monitoring application.
+- The client-side application for TLog, a terminal based log monitoring application.
 
 
 

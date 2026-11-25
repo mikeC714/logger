@@ -71,15 +71,15 @@
 
 Now the easy answer simplicity. Socket.io handles everything that I don't want to handle manually when it comes to a raw socket.
 
-# PROS
-1) Connection Retry/Auto Reconnection
-2) Middleware
-3) Packet Buffering
+* PROS
+- Connection Retry/Auto Reconnection
+- Middleware
+- Packet Buffering
 
 Packet Buffering and reconnection is a pain in the ass in order to get working correctly and using socket.io it handles just that. 
 
-# CONS
-1) Added overhead, socket.io adds alot of overhead compared to raw sockets. Now that's a plus but also a con since I don't use all of the abstractions but the simplicity that socket.io was worth the possible hit on performance.
-2) Handling and creating new events is a bit messy of course there are certains ways and methods that be used in order to make it neater but that doesn't change the fact it can be messy it's just moving the mess.
-3) Of course this isn't a problem and I don't it'll be a problem in the near coming future but 9-10k msgs per sec is about the limit that Socket.io can withstand before buffering starts to occur. 
+* CONS
+- Added overhead, socket.io adds alot of overhead compared to raw sockets. Now that's a plus but also a con since I don't use all of the abstractions but the simplicity that socket.io was worth the possible hit on performance.
+- Handling and creating new events is a bit messy of course there are certains ways and methods that be used in order to make it neater but that doesn't change the fact it can be messy it's just moving the mess.
+- Of course this isn't a problem and I don't it'll be a problem in the near coming future but 9-10k msgs per sec is about the limit that Socket.io can withstand before buffering starts to occur. 
 
