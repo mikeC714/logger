@@ -15,20 +15,20 @@ Install package with:
 
 The package needs your userKey and projectKey:
 
-    ```javaScript
+```javascript
     import { Logger } from "@tlog";
     
     const logger = new Logger({
         userKey:"Hash from application",
         projectKey:"Name of the log"
     });
-    ```
+```
 
 
 ## Basic Usage
 
 
-    ```javaScript
+```javascript
     app.use(async(err:Error | any, req:Request, res:Response, next:NextFunction) => {
 		let status = 500;
 
@@ -48,6 +48,6 @@ The package needs your userKey and projectKey:
 
 		return res.status(err.statusCode || status).json({ error: err.message })
 	});
-    ```
+```
 
 
