@@ -15,7 +15,7 @@ Install package with:
 
 The package needs your userKey and projectKey:
 
-    ```javascript
+    ```javaScript
     import { Logger } from "@tlog";
     
     const logger = new Logger({
@@ -28,7 +28,7 @@ The package needs your userKey and projectKey:
 ## Basic Usage
 
 
-    ```javascript
+    ```javaScript
     app.use(async(err:Error | any, req:Request, res:Response, next:NextFunction) => {
 		let status = 500;
 
